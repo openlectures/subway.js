@@ -1,6 +1,16 @@
 //Magic variables here
-var BLOCKSIZE = 10;
-var TRACK_THICKNESS = 0.5;
+var BLOCKSIZE =20; //Basic scale for all graphics
+var TRACK_THICKNESS = 0.45; //Relative thickness of the track to one block
+var STATION_RADIUS = 0.4; //Relative radius of the station
+var CONNECTOR_RATIO = 0.55; //Relative thickness of connector, to station
+var STATION_LINE_THICKNESS = 0.1; //Absolute thickness of station boundary
+var station_colors = ["#000","#eee"]; //Default colour scheme for stations
+var glow_colors = ["#03f","f9e"]; //Default colour scheme for glow
+
+//Dervied variables
+var CONNECTOR_THICKNESS = 2*STATION_RADIUS*CONNECTOR_RATIO;
+var INNER_RADIUS = STATION_RADIUS - STATION_LINE_THICKNESS;
+var INNER_CONECTOR = CONNECTOR_THICKNESS - STATION_LINE_THICKNESS*2.4;
 
 function Coordinate(x,y){
 	this.x = x;
@@ -106,6 +116,59 @@ Track.prototype.paint = function(){
 	paper.path(svg).attr({"stroke": this.color, "stroke-width": TRACK_THICKNESS*BLOCKSIZE});
 }
 
+function Station(){
+	this.terminals = new Array();
+}
+
+Station.prototype.addTerminal = function(trans){
+	this.terminals.push(sqrToPixel(trans));
+}
+
+Station.prototype.paint = function(){
+	//Set of elements that glows on hover
+	var elements = paper.set();
+	//The glow by the station when mouse is hovered over it
+	var mainGlowElems = paper.set();
+
+	var prevPt=0;
+	for(i in this.terminals){
+		var elem;
+		//Creates a station marker, size depeding on the layer it is at
+		elem = paper.circle(this.terminals[i].x, this.terminals[i].y, STATION_RADIUS*BLOCKSIZE).attr("fill",station_colors[0]);
+		elements.push(elem);
+		mainGlowElems.push(elem.glow({width: BLOCKSIZE/2, color:glow_colors[0]}));
+		//Links previous terminal to this one
+		if(prevPt != 0){
+			elem = paper.path("M"+prevPt+" L"+this.terminals[i]).attr({"stroke":station_colors[0],"stroke-width":BLOCKSIZE*CONNECTOR_THICKNESS});
+			elements.push(elem);
+			mainGlowElems.push(elem.glow({width: BLOCKSIZE*(CONNECTOR_THICKNESS/2+0.25), opacity: 0.8, color:glow_colors[0]}));
+		}
+		prevPt = this.terminals[i];
+	}
+	mainGlowElems.hide();//Glow created, but hidden at first
+
+	prevPt = 0;
+	for(i in this.terminals){
+		elem = paper.circle(this.terminals[i].x, this.terminals[i].y, BLOCKSIZE*INNER_RADIUS).attr("fill",station_colors[1]);
+		elements.push(elem);
+		if(prevPt != 0){
+			elem = paper.path("M"+prevPt+" L"+this.terminals[i]).attr({"stroke":station_colors[1],"stroke-width":BLOCKSIZE*INNER_CONECTOR});
+			elements.push(elem);
+		}
+		prevPt = this.terminals[i];
+	}
+	elements.toFront(); //Make sure glow does not cover the station itself
+
+	//Mouse listeners
+	//Add mouselistener for glow
+	elements.mouseover(function(e){
+		mainGlowElems.show();
+	});
+	elements.mouseout(function(e){
+		mainGlowElems.hide();
+	});
+}
+
 function sqrToPixel(coords){
 	return new Coordinate(coords.x*BLOCKSIZE,coords.y*BLOCKSIZE);
 }
@@ -152,6 +215,13 @@ $("#subway-tracks").children().each(
 		);
 		//Paint the track
 		t.paint();
+	}
+);
+
+//Layer 3, Stations
+$("#subway-stations").children().each(
+	function(index,Element){
+
 	}
 );
 
