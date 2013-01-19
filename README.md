@@ -32,10 +32,26 @@ Create a `<div>` tag, specifying the height and width (in grid coordinates) of t
 ```
 All further elements shall go between this tag.
 
+##Stations
+Stations are where your data-points are shown. This app supports stations with multiple "terminals", i.e. A station may take up more than a single point. Terminals are connected to each other via connectors in a linear fashion. When the mouse is hovered over a station, the station will "glow".
+
+Stations are defined as elements of an unordered list, and go between a `<ul ID="subway-stations"></ul>` tag. Each element defines the coordinates of the terminals, and they are linked in order of how they are specified. X and Y coordinates are seperated by a comma, and coordinate pairs are seperated by a semi-colon. 
+
+Refer to the example below:
+```xml
+<ul ID="subway-stations">
+	<li pos="2,2; 4,4; 2,6" ></li>
+	<li pos="13, 8; 13,9"></li>
+	<li pos="11,16"></li>
+	<li pos="2,18"></li>
+	<li pos="6,18"></li>
+</ul>
+```
+
 ##Tracks
 Tracks connect the various "stations". Currently, this app supports 4-directions for tracks (North, South, East, West), with smooth turns. All tracks should be defined between a `<ul ID="subway-tracks"></ul>` tag.
 
-Each track is another unordered list, with each element representing a segment. Specify the colour of the track, as well as the starting point.
+Each track is another unordered list, with each element representing a segment. Specify the colour of the track, as well as the starting point. A track that is defined first will appear behind a track defined later, should they overlap.
 
 For each subsequent segment, you may:
 

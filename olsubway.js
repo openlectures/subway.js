@@ -221,7 +221,12 @@ $("#subway-tracks").children().each(
 //Layer 3, Stations
 $("#subway-stations").children().each(
 	function(index,Element){
-
+		var terminals = $(Element).attr("pos").split(/[,;]/);
+		var s = new Station();
+		//Add each terminal(start from 1 to prevent overflow)
+		for(var i=1;i<=terminals.length;i+=2)
+			s.addTerminal(new Coordinate(parseInt(terminals[i-1]),parseInt(terminals[i])));
+		s.paint();
 	}
 );
 
