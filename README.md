@@ -37,12 +37,16 @@ Stations are where your data-points are shown. This app supports stations with m
 
 Stations are defined as elements of an unordered list, and go between a `<ul ID="subway-stations"></ul>` tag. Each element defines the coordinates of the terminals, and they are linked in order of how they are specified. X and Y coordinates are seperated by a comma, and coordinate pairs are seperated by a semi-colon. 
 
+Each station can be named. Simply include the name of the station anywhere between the list element tag. The location of the label can then be specified(N,NE,E,SE,S,SW,W,NW), with the default being South. You can also specify the terminal which the label appears next to, e.g. `label-ter="1"` will place the label next to the first terminal you have specified. First terminal is selected by default.
+
+Hyperlinks can be added to the stations. Include them using `<a href="url"></a>` as you would normally do, inside the list element. 
+
 Refer to the example below:
 ```xml
 <ul ID="subway-stations">
-	<li pos="2,2; 4,4; 2,6" ></li>
-	<li pos="13, 8; 13,9"></li>
-	<li pos="11,16"></li>
+	<li pos="2,2; 4,4; 2,6" label-dir="E" label-ter="3" ><a href="http://www.google.com/">Google</a></li>
+	<li pos="13, 8; 13,9" label-ter = "2">ABC</li>
+	<li pos="11,16" label-dir="SE">DEF</li>
 	<li pos="2,18"></li>
 	<li pos="6,18"></li>
 </ul>

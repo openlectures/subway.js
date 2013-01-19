@@ -4,8 +4,10 @@ var TRACK_THICKNESS = 0.45; //Relative thickness of the track to one block
 var STATION_RADIUS = 0.4; //Relative radius of the station
 var CONNECTOR_RATIO = 0.55; //Relative thickness of connector, to station
 var STATION_LINE_THICKNESS = 0.1; //Absolute thickness of station boundary
+var LABEL_FONT_SIZE = 14; //Font size for station labels
 var station_colors = ["#000","#eee"]; //Default colour scheme for stations
 var glow_colors = ["#03f","f9e"]; //Default colour scheme for glow
+
 
 //Dervied variables
 var CONNECTOR_THICKNESS = 2*STATION_RADIUS*CONNECTOR_RATIO;
@@ -116,7 +118,11 @@ Track.prototype.paint = function(){
 	paper.path(svg).attr({"stroke": this.color, "stroke-width": TRACK_THICKNESS*BLOCKSIZE});
 }
 
-function Station(){
+function Station(name, href, labelDir, labelTer){
+	this.name=name;
+	this.href=href;
+	this.labelDir = labelDir;
+	this.labelTer = labelTer;
 	this.terminals = new Array();
 }
 
@@ -130,6 +136,7 @@ Station.prototype.paint = function(){
 	//The glow by the station when mouse is hovered over it
 	var mainGlowElems = paper.set();
 
+	//Outer layer
 	var prevPt=0;
 	for(i in this.terminals){
 		var elem;
@@ -147,6 +154,7 @@ Station.prototype.paint = function(){
 	}
 	mainGlowElems.hide();//Glow created, but hidden at first
 
+	//Inner layer
 	prevPt = 0;
 	for(i in this.terminals){
 		elem = paper.circle(this.terminals[i].x, this.terminals[i].y, BLOCKSIZE*INNER_RADIUS).attr("fill",station_colors[1]);
@@ -159,22 +167,85 @@ Station.prototype.paint = function(){
 	}
 	elements.toFront(); //Make sure glow does not cover the station itself
 
+	//Print station name
+	var label = this.printLabel();
+	elements.push(label);
+
 	//Mouse listeners
 	//Add mouselistener for glow
 	elements.mouseover(function(e){
 		mainGlowElems.show();
-	});
-	elements.mouseout(function(e){
+		label.attr("font-weight","bolder");
+	}).mouseout(function(e){
 		mainGlowElems.hide();
+		label.attr("font-weight","normal");
 	});
+	//Add the link
+	elements.attr("href", this.href);
+}
+
+Station.prototype.printLabel=function(){
+	//Set default values
+	if(typeof this.labelTer == "undefined")
+		this.labelTer = 1;
+	if(typeof this.labelDir == "undefined")
+		this.labelDir = "S";
+	try{
+		if(this.labelTer<0 || this.terminals.length<this.labelTer) throw new Error("Invalid terminal number!");
+	}
+	catch(err){
+		console.error(err.name+": "+err.message);
+	}
+
+	//Text alignments
+	var x = this.terminals[this.labelTer-1].x, y = this.terminals[this.labelTer-1].y;
+	var alignment = "middle";
+	switch(this.labelDir.toUpperCase()){
+		case "N":
+			y-=BLOCKSIZE;
+			break;
+		case "NW":
+		case "WN":
+			x-=BLOCKSIZE/2;
+			y-=BLOCKSIZE/2;
+			alignment = "end";
+			break;
+		case "W":
+			x-=BLOCKSIZE/2;
+			alignment = "end";
+			break;
+		case "SW":
+		case "WS":
+			x-=BLOCKSIZE/2;
+			y+=BLOCKSIZE/2;
+			alignment="end";
+			break;
+		case "S":
+			y+=BLOCKSIZE;
+			break;
+		case "SE":
+		case "ES":
+			x+=BLOCKSIZE/2;
+			y+=BLOCKSIZE/2;
+			alignment = "start";
+			break;
+		case "E":
+			x+=BLOCKSIZE/2;
+			alignment = "start";
+			break;
+		case "NE":
+		case "EN":
+			x+=BLOCKSIZE/2;
+			y-=BLOCKSIZE/2;
+			alignment = "start";
+			break;			
+	}
+	var returnVal = paper.text(x,y,this.name).attr({"text-anchor": alignment, "font-size":LABEL_FONT_SIZE});
+	return returnVal;
 }
 
 function sqrToPixel(coords){
 	return new Coordinate(coords.x*BLOCKSIZE,coords.y*BLOCKSIZE);
-}
-
-function pixelToSqr(coords){
-	return new Coordinate(coords.x/BLOCKSIZE,coords.y/BLOCKSIZE);
 }
 
 //Build canvas
@@ -221,9 +292,14 @@ $("#subway-tracks").children().each(
 //Layer 3, Stations
 $("#subway-stations").children().each(
 	function(index,Element){
-		var terminals = $(Element).attr("pos").split(/[,;]/);
-		var s = new Station();
+		var name = $(Element).text().replace(/\\n/g,"\n");
+		var href = $(Element).children("a").first().attr("href");
+		var labelDir = $(Element).attr("label-dir");
+		var labelTer = $(Element).attr("label-ter");
+		//Create the station
+		var s = new Station(name,href,labelDir,labelTer);
 		//Add each terminal(start from 1 to prevent overflow)
+		var terminals = $(Element).attr("pos").split(/[,;]/);
 		for(var i=1;i<=terminals.length;i+=2)
 			s.addTerminal(new Coordinate(parseInt(terminals[i-1]),parseInt(terminals[i])));
 		s.paint();
