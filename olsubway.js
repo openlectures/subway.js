@@ -16,6 +16,15 @@ var INNER_CONECTOR = CONNECTOR_THICKNESS - STATION_LINE_THICKNESS*2.4;
  //Array of stations for linking
 var stations = new Array();
 
+//For browsers without Object.create
+if(typeof Object.create == "undefined" ) {
+	Object.create = function( o ) {
+	    function F(){}
+	    F.prototype = o;
+	    return new F();
+	};
+}
+
 function Coordinate(x,y){
 	this.x = x;
 	this.y = y;
@@ -323,8 +332,11 @@ $("#subway-stations").children().each(
 		var labelTer = $(Element).attr("label-ter");
 		var links = $(Element).attr("link");
 		//Numerize the link numbers, set to 0 base
-		if(typeof links !="undefined")
-			links = links.split(",").map(function(x){return parseInt(x)-1});
+		if(typeof links !="undefined"){
+			links = links.split(",");
+			for(var i in links)
+				links[i] = parseInt(links[i]-1);
+		}
 		//Create the station
 		var s = new Station(name,href,labelDir,labelTer,links);
 		//Add each terminal(start from 1 to prevent overflow)
