@@ -51,6 +51,19 @@ Refer to the example below:
 	<li pos="6,18"></li>
 </ul>
 ```
+###Links
+Stations that are related can be "linked". When the mouse is hovered over a station, all stations that are linked to it will also light up, in a different colour. To define links, enter the station numbers of the links in the `links=""` attribute. Station numbers are defined in the order in which the station are listed, i.e. The first list item is Station 1, the second Station 2.
+
+In the example below, when the mouse is hovered over the Station "ABC", Station "Google" and "DEF" will also light up.
+```xml
+<ul ID="subway-stations">
+	<li pos="2,2; 4,4; 2,6" label-dir="E" label-ter="3" link="2,3,5,22" ><a href="http://www.google.com/">Google</a></li>
+	<li pos="13, 8; 13,9" label-ter = "2" link="1,3">ABC</li>
+	<li pos="11,16" label-dir="SE">DEF</li>
+	<li pos="2,18" link="2"></li>
+	<li pos="6,18"></li>
+</ul>
+```
 
 ##Tracks
 Tracks connect the various "stations". Currently, this app supports 4-directions for tracks (North, South, East, West), with smooth turns. All tracks should be defined between a `<ul ID="subway-tracks"></ul>` tag.
@@ -95,3 +108,22 @@ Each island is another unordered list, with each element defining an edge (with 
 </ul>
 ```
 > As islands do not have to be defined along the grid, you may use decimals for the coordinates.
+
+##Development
+This app is developed under openlectures.
+
+Contact: hello@openlectures.org
+
+Website: http://openlectures.org/
+
+##Copyright and License
+
+Licensed under the MIT License (MIT).
+
+Copyright © 2013 openlectures LLP (http://openlectures.org/).
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.

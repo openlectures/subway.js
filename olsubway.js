@@ -6,13 +6,15 @@ var CONNECTOR_RATIO = 0.55; //Relative thickness of connector, to station
 var STATION_LINE_THICKNESS = 0.1; //Absolute thickness of station boundary
 var LABEL_FONT_SIZE = 14; //Font size for station labels
 var station_colors = ["#000","#eee"]; //Default colour scheme for stations
-var glow_colors = ["#03f","f9e"]; //Default colour scheme for glow
-
+var glow_colors = ["#03f","709"]; //Default colour scheme for glow
 
 //Dervied variables
 var CONNECTOR_THICKNESS = 2*STATION_RADIUS*CONNECTOR_RATIO;
 var INNER_RADIUS = STATION_RADIUS - STATION_LINE_THICKNESS;
 var INNER_CONECTOR = CONNECTOR_THICKNESS - STATION_LINE_THICKNESS*2.4;
+
+ //Array of stations for linking
+var stations = new Array();
 
 function Coordinate(x,y){
 	this.x = x;
@@ -118,12 +120,17 @@ Track.prototype.paint = function(){
 	paper.path(svg).attr({"stroke": this.color, "stroke-width": TRACK_THICKNESS*BLOCKSIZE});
 }
 
-function Station(name, href, labelDir, labelTer){
+function Station(name, href, labelDir, labelTer, links){
 	this.name=name;
 	this.href=href;
 	this.labelDir = labelDir;
 	this.labelTer = labelTer;
 	this.terminals = new Array();
+	this.links = links;
+	this.ID = stations.length;
+	//Terminals, Main glow, Link glow
+	this.elements = [paper.set(),paper.set(),paper.set()];
+	stations.push(this);
 }
 
 Station.prototype.addTerminal = function(trans){
@@ -131,57 +138,68 @@ Station.prototype.addTerminal = function(trans){
 }
 
 Station.prototype.paint = function(){
-	//Set of elements that glows on hover
-	var elements = paper.set();
-	//The glow by the station when mouse is hovered over it
-	var mainGlowElems = paper.set();
-
 	//Outer layer
 	var prevPt=0;
 	for(i in this.terminals){
 		var elem;
 		//Creates a station marker, size depeding on the layer it is at
 		elem = paper.circle(this.terminals[i].x, this.terminals[i].y, STATION_RADIUS*BLOCKSIZE).attr("fill",station_colors[0]);
-		elements.push(elem);
-		mainGlowElems.push(elem.glow({width: BLOCKSIZE/2, color:glow_colors[0]}));
+		this.elements[0].push(elem);
+		this.elements[1].push(elem.glow({width: BLOCKSIZE/2, color:glow_colors[0]}));
+		this.elements[2].push(elem.glow({width: BLOCKSIZE/2, color:glow_colors[1]}));
 		//Links previous terminal to this one
 		if(prevPt != 0){
 			elem = paper.path("M"+prevPt+" L"+this.terminals[i]).attr({"stroke":station_colors[0],"stroke-width":BLOCKSIZE*CONNECTOR_THICKNESS});
-			elements.push(elem);
-			mainGlowElems.push(elem.glow({width: BLOCKSIZE*(CONNECTOR_THICKNESS/2+0.25), opacity: 0.8, color:glow_colors[0]}));
+			this.elements[0].push(elem);
+			this.elements[1].push(elem.glow({width: BLOCKSIZE*(CONNECTOR_THICKNESS/2*1.8), opacity: 0.8, color:glow_colors[0]}));
+			this.elements[2].push(elem.glow({width: BLOCKSIZE*(CONNECTOR_THICKNESS/2*1.8), opacity: 0.8, color:glow_colors[1]}));
 		}
 		prevPt = this.terminals[i];
 	}
-	mainGlowElems.hide();//Glow created, but hidden at first
+	//Glow created, but hidden at first
+	this.elements[1].hide();
+	this.elements[2].hide();
 
 	//Inner layer
 	prevPt = 0;
 	for(i in this.terminals){
 		elem = paper.circle(this.terminals[i].x, this.terminals[i].y, BLOCKSIZE*INNER_RADIUS).attr("fill",station_colors[1]);
-		elements.push(elem);
+		this.elements[0].push(elem);
 		if(prevPt != 0){
 			elem = paper.path("M"+prevPt+" L"+this.terminals[i]).attr({"stroke":station_colors[1],"stroke-width":BLOCKSIZE*INNER_CONECTOR});
-			elements.push(elem);
+			this.elements[0].push(elem);
 		}
 		prevPt = this.terminals[i];
 	}
-	elements.toFront(); //Make sure glow does not cover the station itself
 
 	//Print station name
 	var label = this.printLabel();
-	elements.push(label);
+	this.elements[0].push(label);
 
+	//Local references
+	var mainElem=this.elements[1];
+	var links = this.links;
 	//Mouse listeners
 	//Add mouselistener for glow
-	elements.mouseover(function(e){
-		mainGlowElems.show();
+	this.elements[0].mouseover(function(e){
+		mainElem.show();
 		label.attr("font-weight","bolder");
+		for(var i in links){
+			var j = links[i];
+			if(j!=this.ID && typeof stations[j] != "undefined")
+				stations[j].elements[2].show();
+		}
 	}).mouseout(function(e){
-		mainGlowElems.hide();
+		mainElem.hide();
 		label.attr("font-weight","normal");
+		for(var i in links){
+			var j = links[i];
+			if(j!=this.ID && typeof stations[j] != "undefined")
+				stations[j].elements[2].hide();
+		}
 	});
 	//Add the link
-	elements.attr("href", this.href);
+	this.elements[0].attr("href", this.href);
 }
 
 Station.prototype.printLabel=function(){
@@ -248,6 +266,13 @@ function sqrToPixel(coords){
 	return new Coordinate(coords.x*BLOCKSIZE,coords.y*BLOCKSIZE);
 }
 
+function reOrderStations(){
+	for(var i=2;i>=0;i--){
+		for(var j in stations)
+			stations[j].elements[i].toFront();
+	}
+}
+
 //Build canvas
 var main = $("#subway");
 var pos = main.position();
@@ -296,8 +321,12 @@ $("#subway-stations").children().each(
 		var href = $(Element).children("a").first().attr("href");
 		var labelDir = $(Element).attr("label-dir");
 		var labelTer = $(Element).attr("label-ter");
+		var links = $(Element).attr("link");
+		//Numerize the link numbers, set to 0 base
+		if(typeof links !="undefined")
+			links = links.split(",").map(function(x){return parseInt(x)-1});
 		//Create the station
-		var s = new Station(name,href,labelDir,labelTer);
+		var s = new Station(name,href,labelDir,labelTer,links);
 		//Add each terminal(start from 1 to prevent overflow)
 		var terminals = $(Element).attr("pos").split(/[,;]/);
 		for(var i=1;i<=terminals.length;i+=2)
@@ -305,6 +334,7 @@ $("#subway-stations").children().each(
 		s.paint();
 	}
 );
+reOrderStations();
 
 //Hide the info lists
 main.hide();
