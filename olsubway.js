@@ -5,10 +5,10 @@ var STATION_RADIUS = 0.4; //Relative radius of the station
 var CONNECTOR_RATIO = 0.55; //Relative thickness of connector, to station
 var STATION_LINE_THICKNESS = 0.1; //Absolute thickness of station boundary
 var LABEL_FONT_SIZE = 14; //Font size for station labels
-var GRID_COLOR = "bbb"; //Colour of the grid
+var GRID_COLOR = "#bbb"; //Colour of the grid
 var END_MOVE = 0.7; //Amount to move the track ending by
 var station_colors = ["#000","#eee"]; //Default colour scheme for stations
-var glow_colors = ["#03f","709"]; //Default colour scheme for glow
+var glow_colors = ["#03f","#709"]; //Default colour scheme for glow
 
 //Dervied variables
 var CONNECTOR_THICKNESS = 2*STATION_RADIUS*CONNECTOR_RATIO;
