@@ -5,9 +5,10 @@ var STATION_RADIUS = 0.4; //Relative radius of the station
 var CONNECTOR_RATIO = 0.55; //Relative thickness of connector, to station
 var STATION_LINE_THICKNESS = 0.1; //Absolute thickness of station boundary
 var LABEL_FONT_SIZE = 14; //Font size for station labels
+var GRID_COLOR = "bbb" //Colour of the grid
+var END_MOVE = 0.7 //Amount to move the track ending by
 var station_colors = ["#000","#eee"]; //Default colour scheme for stations
 var glow_colors = ["#03f","709"]; //Default colour scheme for glow
-var GRID_COLOR = "bbb" //Colour of the grid
 
 //Dervied variables
 var CONNECTOR_THICKNESS = 2*STATION_RADIUS*CONNECTOR_RATIO;
@@ -16,6 +17,9 @@ var INNER_CONECTOR = CONNECTOR_THICKNESS - STATION_LINE_THICKNESS*2.4;
 
  //Array of stations for linking
 var stations = new Array();
+
+//Arrow Head, defined in terms of blocksize, to be scaled later
+var arrow = "M0,0 l0,0.5 0.6,-0.5 -0.6,-0.5z"
 
 //For browsers without Object.create
 if(typeof Object.create == "undefined" ) {
@@ -117,6 +121,7 @@ Track.prototype.addSegment = function(dest, dir){
 }
 
 Track.prototype.paint = function(){
+	this.arrowHead();
 	var svg = "M"+this.segments[0]+" "; //First point is never a "curve"
 	for(var i=1;i<this.segments.length;i++){
 		//Use SVG quadratic Bézier curveto to draw curves
@@ -128,6 +133,25 @@ Track.prototype.paint = function(){
 	}
 
 	paper.path(svg).attr({"stroke": this.color, "stroke-width": TRACK_THICKNESS*BLOCKSIZE});
+}
+
+Track.prototype.arrowHead = function(){
+	if(this.segments.length>1){
+		var elem = this.segments.pop();
+		var trans;
+		if(elem instanceof Curve){
+			trans = coordTrans(elem,elem.pt);
+			elem = new Curve(trans[0], elem.pt);
+		}	
+		else{
+			trans = coordTrans(elem, this.segments[this.segments.length-1]);
+			elem = new Coordinate(trans[0]);
+		}
+			
+		this.segments.push(elem);
+
+		paper.path(arrow).attr({fill: this.color, stroke: "none"}).transform("T"+elem.x +"," +elem.y+"S"+BLOCKSIZE+"R"+trans[1]);
+	}
 }
 
 function Station(name, href, labelDir, labelTer, links){
@@ -281,6 +305,29 @@ function reOrderStations(){
 		for(var j in stations)
 			stations[j].elements[i].toFront();
 	}
+}
+
+function coordTrans(end, prev){
+	//Moves coordinate back by end move, works even for eight directions
+	var returnX = end.x, returnY = end.y;
+	var deg = 0;
+	if(end.x-prev.x>0)
+		returnX-=END_MOVE*BLOCKSIZE;
+	else if (end.x-prev.x<0){
+		returnX+=END_MOVE*BLOCKSIZE;
+		deg = 180;
+	}
+
+	if(end.y-prev.y>0){
+		returnY-=END_MOVE*BLOCKSIZE;
+		deg = 90;
+	}
+	else if(end.y-prev.y<0){
+		returnY+=END_MOVE*BLOCKSIZE;
+		deg = 270;
+	}
+
+	return [new Coordinate(returnX,returnY),deg];
 }
 
 //Build canvas

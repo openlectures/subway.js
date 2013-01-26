@@ -75,6 +75,8 @@ For each subsequent segment, you may:
 1. Define a straight link by simply specifying the coordinates of the next point.
 2. Define a curve, by specifying the coordinates of the next point, as well as the direction the track faces after the curve.
 
+At the end of the defined track, an arrowhead will point to the final destination. Avoid defining sharp turns at the very end to prevent the arrow to appear in an awkard way.
+
 Refer to the example below:
 ```xml
 <ul ID="subway-tracks">
