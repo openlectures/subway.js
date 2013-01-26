@@ -26,9 +26,9 @@ Include *olsubway.js* in the HTML file body
 ```xml
 <script type="text/javascript" src="./olsubway.js"></script>
 ```
-Create a `<div>` tag, specifying the height and width (in grid coordinates) of the map window. The map shall be placed at the position the contents of the tag resides.
+Create a `<div>` tag, specifying the height and width (in grid coordinates) of the map window. The map shall be placed at the position the contents of the tag resides. `debug="true"` can be included to display a grid for referencing.
 ```xml
-<div ID="subway" height="50" width = "50"></div>
+<div ID="subway" height="50" width = "50" debug="true"></div>
 ```
 All further elements shall go between this tag.
 

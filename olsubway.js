@@ -7,6 +7,7 @@ var STATION_LINE_THICKNESS = 0.1; //Absolute thickness of station boundary
 var LABEL_FONT_SIZE = 14; //Font size for station labels
 var station_colors = ["#000","#eee"]; //Default colour scheme for stations
 var glow_colors = ["#03f","709"]; //Default colour scheme for glow
+var GRID_COLOR = "bbb" //Colour of the grid
 
 //Dervied variables
 var CONNECTOR_THICKNESS = 2*STATION_RADIUS*CONNECTOR_RATIO;
@@ -285,7 +286,8 @@ function reOrderStations(){
 //Build canvas
 var main = $("#subway");
 var pos = main.position();
-var paper = Raphael(pos.left,pos.top, main.attr("width")*BLOCKSIZE, main.attr("height")*BLOCKSIZE);
+var width = main.attr("width"), height = main.attr("height") ;
+var paper = Raphael(pos.left,pos.top, width*BLOCKSIZE, height*BLOCKSIZE);
 
 //Layer 1, Islands
 $("#subway-islands").children().each(
@@ -304,6 +306,15 @@ $("#subway-islands").children().each(
 		i.paint();
 	}
 );
+
+//Grid
+if(main.attr("debug")=="true"){
+	for (var i = 0; i <= width; i++)
+		paper.path("M"+i*BLOCKSIZE+", 0 L"+ i*BLOCKSIZE+", "+height*BLOCKSIZE).attr({"stroke":GRID_COLOR, "stroke-width":2});
+
+	for(var i=0;i<=height;i++)
+		paper.path("M0, "+i*BLOCKSIZE+" L"+width*BLOCKSIZE+", "+i*BLOCKSIZE).attr({"stroke":GRID_COLOR, "stroke-width":2});
+}
 
 //Layer 2, Tracks
 $("#subway-tracks").children().each(
