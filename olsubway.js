@@ -1,5 +1,5 @@
 //Magic variables here
-var BLOCKSIZE =30; //Basic scale for all graphics
+var BLOCKSIZE =20; //Basic scale for all graphics
 var TRACK_THICKNESS = 0.45; //Relative thickness of the track to one block
 var STATION_RADIUS = 0.4; //Relative radius of the station
 var CONNECTOR_RATIO = 0.55; //Relative thickness of connector, to station

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+  <title>Test</title>
+  <script type="text/javascript" src="./resources/jquery.min.js"></script>
+  <script type="text/javascript" src="./resources/raphael-min.js"></script>
+</head>
+<body>
+  <script type="text/javascript" src="./olsubway.js"></script>
+  <div ID="subway" height="50" width = "50" debug="true"></div>
+  <ul ID="subway-stations">
+    <li pos="2,2; 4,4; 2,6" label-dir="E" label-ter="3" ><a href="http://www.google.com/">Google</a></li>
+    <li pos="13, 8; 13,9" label-ter = "2">ABC</li>
+    <li pos="11,16" label-dir="SE">DEF</li>
+    <li pos="2,18"></li>
+    <li pos="6,18"></li>
+</ul>
+<ul ID="subway-stations">
+    <li pos="2,2; 4,4; 2,6" label-dir="E" label-ter="3" link="2,3,5,22" ><a href="http://www.google.com/">Google</a></li>
+    <li pos="13, 8; 13,9" label-ter = "2" link="1,3">ABC</li>
+    <li pos="11,16" label-dir="SE">DEF</li>
+    <li pos="2,18" link="2"></li>
+    <li pos="6,18"></li>
+</ul>
+<ul ID="subway-tracks">
+    <ul color="#f3b" start-point="2,2">
+        <li dest="5,2"></li>
+        <li dest="6,3" turn="S"></li>
+        <li dest="6,6"></li>
+        <li dest="9,9" turn="E"></li>
+        <li dest="16,9"></li>
+        <li dest="17,10" turn="S"></li>
+        <li dest="15,12" turn="W"></li>
+        <li dest="11,16" turn="S"></li>
+        <li dest="9,18" turn="W"></li>
+        <li dest="2,18"></li>
+    </ul>
+</ul>
+</body>
+</html>
