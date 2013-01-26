@@ -206,6 +206,11 @@ Station.prototype.paint = function(){
 		prevPt = this.terminals[i];
 	}
 
+	//Print Station number
+	for (var i in this.terminals) {
+		this.elements[0].push(paper.text(this.terminals[i].x,this.terminals[i].y,this.ID+1).attr({"font-size": INNER_RADIUS*BLOCKSIZE*1.8,"font-weight":"bolder"}));
+	}
+
 	//Print station name
 	var label = this.printLabel();
 	this.elements[0].push(label);

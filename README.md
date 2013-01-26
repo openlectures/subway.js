@@ -52,7 +52,7 @@ Refer to the example below:
 </ul>
 ```
 ###Links
-Stations that are related can be "linked". When the mouse is hovered over a station, all stations that are linked to it will also light up, in a different colour. To define links, enter the station numbers of the links in the `links=""` attribute. Station numbers are defined in the order in which the station are listed, i.e. The first list item is Station 1, the second Station 2.
+Stations that are related can be "linked". When the mouse is hovered over a station, all stations that are linked to it will also light up, in a different colour. To define links, enter the station numbers of the links in the `links=""` attribute. Station numbers are defined in the order in which the station are listed, i.e. The first list item is Station 1, the second Station 2. Station numbers are also displayed on the station itself.
 
 In the example below, when the mouse is hovered over the Station "ABC", Station "Google" and "DEF" will also light up.
 ```xml
