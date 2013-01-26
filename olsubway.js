@@ -146,7 +146,7 @@ Track.prototype.arrowHead = function(){
 		}	
 		else{
 			trans = coordTrans(elem, this.segments[this.segments.length-1]);
-			elem = new Coordinate(trans[0]);
+			elem = new Coordinate(trans[0].x,trans[0].y);
 		}
 			
 		this.segments.push(elem);
