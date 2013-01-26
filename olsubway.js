@@ -1,12 +1,12 @@
 //Magic variables here
-var BLOCKSIZE =20; //Basic scale for all graphics
+var BLOCKSIZE =30; //Basic scale for all graphics
 var TRACK_THICKNESS = 0.45; //Relative thickness of the track to one block
 var STATION_RADIUS = 0.4; //Relative radius of the station
 var CONNECTOR_RATIO = 0.55; //Relative thickness of connector, to station
 var STATION_LINE_THICKNESS = 0.1; //Absolute thickness of station boundary
 var LABEL_FONT_SIZE = 14; //Font size for station labels
-var GRID_COLOR = "bbb" //Colour of the grid
-var END_MOVE = 0.7 //Amount to move the track ending by
+var GRID_COLOR = "bbb"; //Colour of the grid
+var END_MOVE = 0.7; //Amount to move the track ending by
 var station_colors = ["#000","#eee"]; //Default colour scheme for stations
 var glow_colors = ["#03f","709"]; //Default colour scheme for glow
 
@@ -19,7 +19,7 @@ var INNER_CONECTOR = CONNECTOR_THICKNESS - STATION_LINE_THICKNESS*2.4;
 var stations = new Array();
 
 //Arrow Head, defined in terms of blocksize, to be scaled later
-var arrow = "M0,0 l0,0.5 0.6,-0.5 -0.6,-0.5z"
+var arrow = "M0,0 l0,0.5 0.6,-0.5 -0.6,-0.5z";
 
 //For browsers without Object.create
 if(typeof Object.create == "undefined" ) {
@@ -50,7 +50,7 @@ function Island(name, color, fontSize, fontColor){
 Island.prototype.addEdge = function(coords){
 	coords = sqrToPixel(coords);
 	this.edges.push(coords);
-}
+};
 
 Island.prototype.centroid = function(){
 	try{
@@ -75,7 +75,7 @@ Island.prototype.centroid = function(){
 	this.edges.pop();//Remove repaeated element
 
 	return new Coordinate(1/(3*sumArea)*sumX, 1/(3*sumArea)*sumY);
-}
+};
 
 Island.prototype.paint = function(){
 	if(this.edges.length>2){//Polygons have at least 3 edges
@@ -89,17 +89,18 @@ Island.prototype.paint = function(){
 		var center = this.centroid();
 		paper.text(center.x,center.y,this.name).attr({"font-size":this.fontSize, "fill": this.fontColor});
 	}
-}
+};
 
 function Curve(dest,pt){ //pt is the point used to define the curve
 	Coordinate.call(this,dest.x, dest.y);
 	this.pt = pt;
 }
+
 Curve.prototype = Object.create(Coordinate.prototype);
 
 Curve.prototype.toString = function(){
 	return this.pt+" "+Coordinate.prototype.toString.call(this);
-}
+};
 
 function Track(color, startingPt){
 	this.color = color;
@@ -118,7 +119,7 @@ Track.prototype.addSegment = function(dest, dir){
 	//Vertical to horizontal (control = (prev.x,dest.y))
 	else if(dir == "E" || dir == "W")
 		this.segments.push(new Curve(dest, new Coordinate(this.segments[this.segments.length-1].x,dest.y)));
-}
+};
 
 Track.prototype.paint = function(){
 	this.arrowHead();
@@ -133,7 +134,7 @@ Track.prototype.paint = function(){
 	}
 
 	paper.path(svg).attr({"stroke": this.color, "stroke-width": TRACK_THICKNESS*BLOCKSIZE});
-}
+};
 
 Track.prototype.arrowHead = function(){
 	if(this.segments.length>1){
@@ -152,7 +153,7 @@ Track.prototype.arrowHead = function(){
 
 		paper.path(arrow).attr({fill: this.color, stroke: "none"}).transform("T"+elem.x +"," +elem.y+"S"+BLOCKSIZE+"R"+trans[1]);
 	}
-}
+};
 
 function Station(name, href, labelDir, labelTer, links){
 	this.name=name;
@@ -169,7 +170,7 @@ function Station(name, href, labelDir, labelTer, links){
 
 Station.prototype.addTerminal = function(trans){
 	this.terminals.push(sqrToPixel(trans));
-}
+};
 
 Station.prototype.paint = function(){
 	//Outer layer
@@ -182,7 +183,7 @@ Station.prototype.paint = function(){
 		this.elements[1].push(elem.glow({width: BLOCKSIZE/2, color:glow_colors[0]}));
 		this.elements[2].push(elem.glow({width: BLOCKSIZE/2, color:glow_colors[1]}));
 		//Links previous terminal to this one
-		if(prevPt != 0){
+		if(prevPt !== 0){
 			elem = paper.path("M"+prevPt+" L"+this.terminals[i]).attr({"stroke":station_colors[0],"stroke-width":BLOCKSIZE*CONNECTOR_THICKNESS});
 			this.elements[0].push(elem);
 			this.elements[1].push(elem.glow({width: BLOCKSIZE*(CONNECTOR_THICKNESS/2*1.8), opacity: 0.8, color:glow_colors[0]}));
@@ -199,7 +200,7 @@ Station.prototype.paint = function(){
 	for(i in this.terminals){
 		elem = paper.circle(this.terminals[i].x, this.terminals[i].y, BLOCKSIZE*INNER_RADIUS).attr("fill",station_colors[1]);
 		this.elements[0].push(elem);
-		if(prevPt != 0){
+		if(prevPt !== 0){
 			elem = paper.path("M"+prevPt+" L"+this.terminals[i]).attr({"stroke":station_colors[1],"stroke-width":BLOCKSIZE*INNER_CONECTOR});
 			this.elements[0].push(elem);
 		}
@@ -239,7 +240,7 @@ Station.prototype.paint = function(){
 	});
 	//Add the link
 	this.elements[0].attr("href", this.href);
-}
+};
 
 Station.prototype.printLabel=function(){
 	//Set default values
@@ -295,11 +296,11 @@ Station.prototype.printLabel=function(){
 			x+=BLOCKSIZE/2;
 			y-=BLOCKSIZE/2;
 			alignment = "start";
-			break;			
+			break;
 	}
 	var returnVal = paper.text(x,y,this.name).attr({"text-anchor": alignment, "font-size":LABEL_FONT_SIZE});
 	return returnVal;
-}
+};
 
 function sqrToPixel(coords){
 	return new Coordinate(coords.x*BLOCKSIZE,coords.y*BLOCKSIZE);
