@@ -9,6 +9,7 @@ Features includes:
 * Rendering of "stations" and 4-directional "tracks"
 * Islands to group "stations"
 * Interactive "stations" that could show additional links
+* Display a grid to aid positioning
 
 The map works on a grid system, with each grid taking up ??? pixels. Cooridnates are defined at the cross-sections of the grid, and __all__ settings in the HTML file should be defined in terms of grid coordinates.
 
@@ -22,13 +23,14 @@ Include the Javascript libraries in your HTML file header. They are provided in 
 <script type="text/javascript" src="./resources/jquery.min.js"></script>
 <script type="text/javascript" src="./resources/raphael-min.js"></script>
 ```
-Include *olsubway.js* in the HTML file body
+Include *olsubway.js* in the HTML file body, at the end.
+>Note: the script has to be at the end or it will not work.
 ```xml
 <script type="text/javascript" src="./olsubway.js"></script>
 ```
-Create a `<div>` tag, specifying the height and width (in grid coordinates) of the map window. The map shall be placed at the position the contents of the tag resides. `debug="true"` can be included to display a grid for referencing.
+Create a `<div>` tag. The map will be contained within the parent component of the tag. `debug="true"` can be included to display a grid for referencing. The width and height of the canvas will be determined automatically from the elements created.
 ```xml
-<div ID="subway" height="50" width = "50" debug="true"></div>
+<div ID="subway" debug="true"></div>
 ```
 All further elements shall go between this tag.
 
