@@ -9,26 +9,31 @@ Features includes:
 * Rendering of "stations" and 4-directional "tracks"
 * Islands to group "stations"
 * Interactive "stations" that could show additional links
+* Automatic scaling of map to the width of it's container
 * Display a grid to aid positioning
 
-The map works on a grid system, with each grid taking up ??? pixels. Cooridnates are defined at the cross-sections of the grid, and __all__ settings in the HTML file should be defined in terms of grid coordinates.
+The map works on a grid system. Cooridnates are defined at the cross-sections of the grid, and __all__ settings in the HTML file should be defined in terms of grid coordinates.
 
 ###Libraries
 * Rapheal: http://raphaeljs.com/ 
+    * ScaleRapheal: http://www.shapevent.com/scaleraphael/
 * jQuery: http://jquery.com/
+    * jQuery throttle / debounce: http://benalman.com/projects/jquery-throttle-debounce-plugin/
 
 ##Set-up
 Include the Javascript libraries in your HTML file header. They are provided in the resources folder.
 ```xml
 <script type="text/javascript" src="./resources/jquery.min.js"></script>
 <script type="text/javascript" src="./resources/raphael-min.js"></script>
+<script type="text/javascript" src="./resources/scale.raphael.js"></script>
+<script type="text/javascript" src="./resources/jquery.ba-throttle-debounce.min.js"></script>
 ```
 Include *olsubway.js* in the HTML file body, at the end.
 >Note: the script has to be at the end or it will not work.
 ```xml
 <script type="text/javascript" src="./olsubway.js"></script>
 ```
-Create a `<div>` tag. The map will be contained within the parent component of the tag. `debug="true"` can be included to display a grid for referencing. The width and height of the canvas will be determined automatically from the elements created.
+Create a `<div>` tag. The map will be contained within the tag. `debug="true"` can be included to display a grid for referencing. The width and height of the canvas will be determined automatically from the elements created.
 ```xml
 <div ID="subway" debug="true"></div>
 ```
@@ -112,6 +117,12 @@ Each island is another unordered list, with each element defining an edge (with 
 </ul>
 ```
 > As islands do not have to be defined along the grid, you may use decimals for the coordinates.
+
+##Scaling
+The map is scaled automatically based on the width of the container it is in, i.e. The container of the `<div>` tag.
+
+The map is rescaled(debounced) when the window is resized. Thus, in any application where the map container's width is changed when resizing the window, the map will be scaled accordingly to fit the width of the container.
+>This means that the map will fit exactly into the container horizontally, but not vertically.
 
 ##Development
 This app is developed under openlectures.

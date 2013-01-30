@@ -7,6 +7,7 @@ var STATION_LINE_THICKNESS = 0.1; //Absolute thickness of station boundary
 var LABEL_FONT_SIZE = 14; //Font size for station labels
 var GRID_COLOR = "#bbb"; //Colour of the grid
 var END_MOVE = 0.7; //Amount to move the track ending by
+var DEBOUNCE_TIME = 40;
 var station_colors = ["#000","#eee"]; //Default colour scheme for stations
 var glow_colors = ["#03f","#709"]; //Default colour scheme for glow
 
@@ -178,7 +179,7 @@ function Station(name, href, labelDir, labelTer, links){
     this.links = links;
     this.ID = stations.length;
     //Terminals, Main glow, Link glow
-    this.elements = [paper.set(),paper.set(),paper.set()];
+    this.elements = [new Array(),new Array(),new Array()];
     stations.push(this);
 }
 
@@ -222,10 +223,7 @@ Station.prototype.paint = function(){
         }
         prevPt = this.terminals[i];
     }
-    //Glow created, but hidden at first
-    this.elements[1].hide();
-    this.elements[2].hide();
-
+    
     //Inner layer
     prevPt = 0;
     for(i in this.terminals){
@@ -252,6 +250,13 @@ Station.prototype.paint = function(){
     //Print station name
     var label = this.printLabel();
     this.elements[0].push(label);
+    
+    for (i in this.elements)
+        this.elements[i] = arrayToSet(this.elements[i]);
+    
+    //Glow created, but hidden at first
+    this.elements[1].hide();
+    this.elements[2].hide();
 
     //Local references
     var mainElem=this.elements[1];
@@ -376,6 +381,20 @@ function coordTrans(end, prev){
     return [new Coordinate(returnX,returnY),deg];
 }
 
+//Convert the array of elements into a set
+function arrayToSet(array) {
+    var set = paper.set();
+    for (var i in array)
+        set.push(array[i]);
+    return set;
+}
+
+//Resize canvas based on parent container
+function canvasResize() {
+    var container = $("#subway").parent();
+    paper.changeSize(container.width(),container.width(),false,true);
+}
+
 //Max box reference
 var boundBox = new Coordinate(0,0);
 function maxCoord(newCoord) {
@@ -384,9 +403,8 @@ function maxCoord(newCoord) {
     boundBox.y = Math.max(boundBox.y,Math.floor(newCoord.y));
 }
 
-//Build canvas
-var main = $("#subway");
-var paper = Raphael(main.parent().get(0));
+//A printing queue which holds what raphael needs to render
+var paintQueue = new Array();
 
 //Layer 1, Islands
 $("#subway-islands").children().each(
@@ -403,7 +421,7 @@ $("#subway-islands").children().each(
                 maxCoord(newCoord);
             });
         //Paint the island
-        i.paint();
+        paintQueue.push(i);
     });
 
 //Layer 2, Tracks
@@ -423,7 +441,7 @@ $("#subway-tracks").children().each(
                 maxCoord(newCoord);
             });
         //Paint the track
-        t.paint();
+        paintQueue.push(t);
     });
 
 //Layer 3, Stations
@@ -449,15 +467,20 @@ $("#subway-stations").children().each(
             s.addTerminal(newCoord);
             maxCoord(newCoord);
         }
-        s.paint();
+        paintQueue.push(s);
     });
+    
+//Snap size, build canvas    
+var width = boundBox.x+1, height = boundBox.y+1;
+var paper = ScaleRaphael("subway",width*BLOCKSIZE,height*BLOCKSIZE);
+for (var i in paintQueue) {
+    paintQueue[i].paint();
+}
 reOrderStations();
 
-//Resize the canvas
-var width = boundBox.x+1, height = boundBox.y+1;
-paper.setSize(width*BLOCKSIZE,height*BLOCKSIZE);
-if(main.attr("debug")=="true"){
-    for (var i = 0; i <= width; i++){
+//Debug grid
+if($("#subway").attr("debug")=="true"){
+    for (i = 0; i <= width; i++){
         paper.path("M"+i*BLOCKSIZE+", 0 L"+ i*BLOCKSIZE+", "+height*BLOCKSIZE).attr({
             "stroke":GRID_COLOR, 
             "stroke-width":2
@@ -476,5 +499,6 @@ if(main.attr("debug")=="true"){
         islands[i].toBack();
 }
 
-//Hide the info lists
-main.hide();
+//Resize and add debounced autoResize
+canvasResize();
+window.onresize = $.debounce(DEBOUNCE_TIME,canvasResize);
