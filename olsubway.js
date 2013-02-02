@@ -1,3 +1,11 @@
+ /*
+ * OLsubwaymap
+ * Licensed under the MIT License (MIT). (http://opensource.org/licenses/MIT)
+ * Copyright © 2013 openlectures LLP (http://openlectures.org/).
+ * 
+ * https://github.com/openlectures/OLsubwaymap
+ */
+ 
 //Magic variables here
 var BLOCKSIZE =20; //Basic scale for all graphics
 var TRACK_THICKNESS = 0.45; //Relative thickness of the track to one block

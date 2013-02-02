@@ -25,10 +25,8 @@ Include the Javascript libraries in your HTML file header. They are provided in 
 ```xml
 <script type="text/javascript" src="./resources/jquery.min.js"></script>
 <script type="text/javascript" src="./resources/raphael-min.js"></script>
-<script type="text/javascript" src="./resources/scale.raphael.js"></script>
-<script type="text/javascript" src="./resources/jquery.ba-throttle-debounce.min.js"></script>
 ```
-Include *olsubway.js* in the HTML file body, at the end.
+Include *olsubway-min.js* in the HTML file body, at the end.
 >Note: the script has to be at the end or it will not work.
 
 ```xml
