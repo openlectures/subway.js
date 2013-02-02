@@ -30,12 +30,13 @@ Include the Javascript libraries in your HTML file header. They are provided in 
 ```
 Include *olsubway.js* in the HTML file body, at the end.
 >Note: the script has to be at the end or it will not work.
+
 ```xml
 <script type="text/javascript" src="./olsubway.js"></script>
 ```
-Create a `<div>` tag. The map will be contained within the tag. `debug="true"` can be included to display a grid for referencing. The width and height of the canvas will be determined automatically from the elements created.
+Create a `<div>` tag. The map will be contained within the tag. `data-debug="true"` can be included to display a grid for referencing. The width and height of the canvas will be determined automatically from the elements created.
 ```xml
-<div ID="subway" debug="true"></div>
+<div ID="subway" data-debug="true"></div>
 ```
 All further elements shall go between this tag.
 
@@ -51,31 +52,33 @@ Hyperlinks can be added to the stations. Include them using `<a href="url"></a>`
 Refer to the example below:
 ```xml
 <ul ID="subway-stations">
-	<li pos="2,2; 4,4; 2,6" label-dir="E" label-ter="3" ><a href="http://www.google.com/">Google</a></li>
-	<li pos="13, 8; 13,9" label-ter = "2">ABC</li>
-	<li pos="11,16" label-dir="SE">DEF</li>
-	<li pos="2,18"></li>
-	<li pos="6,18"></li>
+	<li data-pos="2,2; 4,4; 2,6" data-label-dir="E" data-label-ter="3" ><a href="http://www.google.com/">Google</a></li>
+	<li data-pos="13, 8; 13,9" data-label-ter = "2">ABC</li>
+	<li data-pos="11,16" data-label-dir="SE">DEF</li>
+	<li data-pos="2,18"></li>
+	<li data-pos="6,18"></li>
 </ul>
 ```
+>Note: All data attributes are defined as custom HTML attributes, as defined in HTML5.
+
 ###Links
-Stations that are related can be "linked". When the mouse is hovered over a station, all stations that are linked to it will also light up, in a different colour. To define links, enter the station numbers of the links in the `links=""` attribute. Station numbers are defined in the order in which the station are listed, i.e. The first list item is Station 1, the second Station 2. Station numbers are also displayed on the station itself.
+Stations that are related can be "linked". When the mouse is hovered over a station, all stations that are linked to it will also light up, in a different colour. To define links, enter the station numbers of the links in the `data-links` attribute. Station numbers are defined in the order in which the station are listed, i.e. The first list item is Station 1, the second Station 2. Station numbers are also displayed on the station itself.
 
 In the example below, when the mouse is hovered over the Station "ABC", Station "Google" and "DEF" will also light up.
 ```xml
 <ul ID="subway-stations">
-	<li pos="2,2; 4,4; 2,6" label-dir="E" label-ter="3" link="2,3,5,22" ><a href="http://www.google.com/">Google</a></li>
-	<li pos="13, 8; 13,9" label-ter = "2" link="1,3">ABC</li>
-	<li pos="11,16" label-dir="SE">DEF</li>
-	<li pos="2,18" link="2"></li>
-	<li pos="6,18"></li>
+	<li data-pos="2,2; 4,4; 2,6" data-label-dir="E" data-label-ter="3" data-link="2,3,5,22" ><a href="http://www.google.com/">Google</a></li>
+	<li data-pos="13, 8; 13,9" data-label-ter = "2" data-link="1,3">ABC</li>
+	<li data-pos="11,16" data-label-dir="SE">DEF</li>
+	<li data-pos="2,18" data-link="2"></li>
+	<li data-pos="6,18"></li>
 </ul>
 ```
 
 ##Tracks
-Tracks connect the various "stations". Currently, this app supports 4-directions for tracks (North, South, East, West), with smooth turns. All tracks should be defined between a `<ul ID="subway-tracks"></ul>` tag.
+Tracks connect the various "stations". Currently, this app supports 4-directions for tracks (North, South, East, West), with smooth turns. 
 
-Each track is another unordered list, with each element representing a segment. Specify the colour of the track, as well as the starting point. A track that is defined first will appear behind a track defined later, should they overlap.
+Each track is an unordered list, under `class="subway-tracks"`, with each element representing a segment. Specify the colour of the track, as well as the starting point. A track that is defined first will appear behind a track defined later, should they overlap.
 
 For each subsequent segment, you may:
 
@@ -86,19 +89,17 @@ At the end of the defined track, an arrowhead will point to the final destinatio
 
 Refer to the example below:
 ```xml
-<ul ID="subway-tracks">
-	<ul color="#f3b" start-point="2,2">
-		<li dest="5,2"></li>
-		<li dest="6,3" turn="S"></li>
-		<li dest="6,6"></li>
-		<li dest="9,9" turn="E"></li>
-		<li dest="16,9"></li>
-		<li dest="17,10" turn="S"></li>
-		<li dest="15,12" turn="W"></li>
-		<li dest="11,16" turn="S"></li>
-		<li dest="9,18" turn="W"></li>
-		<li dest="2,18"></li>
-	</ul>
+<ul class="subway-tracks" data-color="#f3b" data-start-point="2,2">
+    <li data-dest="5,2"></li>
+    <li data-dest="6,3" data-turn="S"></li>
+    <li data-dest="6,6"></li>
+    <li data-dest="9,9" data-turn="E"></li>
+    <li data-dest="16,9"></li>
+    <li data-dest="17,10" data-turn="S"></li>
+    <li data-dest="15,12" data-turn="W"></li>
+    <li data-dest="11,16" data-turn="S"></li>
+    <li data-dest="9,18" data-turn="W"></li>
+    <li data-dest="2,18"></li>
 </ul>
 ```
 > Note that it is possible to create tracks that do not stick to the four directions this app is designed to handle, though it might not look the way it is intended to look like.
@@ -106,14 +107,14 @@ Refer to the example below:
 ##Islands
 Islands can be used to group certain "stations". All islands should be defined between a `<ul ID="subway-islands"></ul>` tag.
 
-Each island is another unordered list, with each element defining an edge (with coordinates) of the island. Specify the name, background colour, label font size and colour. The name of the island will be displayed at the centroid of the polygon which defines the island. Refer to the exmaple below.
+Each island is an unordered list, under `class="subway-tracks"`, with each element defining an edge (with coordinates) of the island. Specify the name, background colour, label font size and colour. The name of the island will be displayed at the centroid of the polygon which defines the island. Refer to the exmaple below.
 ```xml
-<ul island-name="Test" background-color="#ddd" font-size="32px" font-color="#fff">
-	<li edge="1,1"></li>
-	<li edge="18.5,1"></li>
-	<li edge="18.5,20"></li>
-	<li edge="10,25"></li>
-	<li edge="1,20"></li>
+<ul class="subway-islands" data-island-name="Test" data-background-color="#ddd" data-font-size="50px" data-font-color="#fff">
+    <li data-edge="1,1"></li>
+    <li data-edge="18.5,1"></li>
+    <li data-edge="18.5,20"></li>
+    <li data-edge="10,25"></li>
+    <li data-edge="1,20"></li>
 </ul>
 ```
 > As islands do not have to be defined along the grid, you may use decimals for the coordinates.

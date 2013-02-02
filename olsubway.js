@@ -407,15 +407,15 @@ function maxCoord(newCoord) {
 var paintQueue = new Array();
 
 //Layer 1, Islands
-$("#subway-islands").children().each(
+$(".subway-islands").each(
     function(index, Element){
         //Build an island
-        var i = new Island($(Element).attr("island-name"),$(Element).attr("background-color"),$(Element).attr("font-size"), $(Element).attr("font-color"));
+        var i = new Island($(Element).data("island-name"),$(Element).data("background-color"),$(Element).data("font-size"), $(Element).data("font-color"));
         //Add the edges
         $(Element).children().each(
             function(index,Element){
                 //Split the x and y and add it to the polygon
-                var edgeCoords = $(Element).attr("edge").split(",");
+                var edgeCoords = $(Element).data("edge").split(",");
                 var newCoord = new Coordinate(parseFloat(edgeCoords[0]),parseFloat(edgeCoords[1]));
                 i.addEdge(newCoord);
                 maxCoord(newCoord);
@@ -425,19 +425,19 @@ $("#subway-islands").children().each(
     });
 
 //Layer 2, Tracks
-$("#subway-tracks").children().each(
+$(".subway-tracks").each(
     function(index, Element){
         //Build a new track
-        var startingCoord = $(Element).attr("start-point").split(",");
+        var startingCoord = $(Element).data("start-point").split(",");
         var newCoord = new Coordinate(parseInt(startingCoord[0]), parseInt(startingCoord[1]));
-        var t = new Track($(Element).attr("color"), newCoord);
+        var t = new Track($(Element).data("color"), newCoord);
         maxCoord(newCoord);
         //Process each segment
         $(Element).children().each(
             function(index,Element){
-                var destCoords = $(Element).attr("dest").split(",");
+                var destCoords = $(Element).data("dest").split(",");
                 newCoord = new Coordinate(parseInt(destCoords[0]),parseInt(destCoords[1]));
-                t.addSegment(newCoord, $(Element).attr("turn"));
+                t.addSegment(newCoord, $(Element).data("turn"));
                 maxCoord(newCoord);
             });
         //Paint the track
@@ -449,19 +449,19 @@ $("#subway-stations").children().each(
     function(index,Element){
         var name = $(Element).text().replace(/\\n/g,"\n");
         var href = $(Element).children("a").first().attr("href");
-        var labelDir = $(Element).attr("label-dir");
-        var labelTer = $(Element).attr("label-ter");
-        var links = $(Element).attr("link");
+        var labelDir = $(Element).data("label-dir");
+        var labelTer = $(Element).data("label-ter");
+        var links = $(Element).data("link");
         //Numerize the link numbers, set to 0 base
         if(typeof links !="undefined"){
-            links = links.split(",");
+            links = links.toString().split(",");
             for(var i in links)
                 links[i] = parseInt(links[i]-1);
         }
         //Create the station
         var s = new Station(name,href,labelDir,labelTer,links);
         //Add each terminal(start from 1 to prevent overflow)
-        var terminals = $(Element).attr("pos").split(/[,;]/);
+        var terminals = $(Element).data("pos").split(/[,;]/);
         for(i=1;i<=terminals.length;i+=2){
             var newCoord = new Coordinate(parseInt(terminals[i-1]),parseInt(terminals[i]));
             s.addTerminal(newCoord);
@@ -479,7 +479,7 @@ for (var i in paintQueue) {
 reOrderStations();
 
 //Debug grid
-if($("#subway").attr("debug")=="true"){
+if($("#subway").data("debug")){
     for (i = 0; i <= width; i++){
         paper.path("M"+i*BLOCKSIZE+", 0 L"+ i*BLOCKSIZE+", "+height*BLOCKSIZE).attr({
             "stroke":GRID_COLOR, 
