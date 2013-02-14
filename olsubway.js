@@ -3,9 +3,9 @@
  * Licensed under the MIT License (MIT). (http://opensource.org/licenses/MIT)
  * Copyright © 2013 openlectures LLP (http://openlectures.org/).
  * 
- * https://github.com/openlectures/OLsubwaymap
+ * https://github.com/openlectures/OLsubway.js
  */
- 
+
 (function(env){
     //Magic variables here
     var BLOCKSIZE =20; //Basic scale for all graphics
@@ -17,22 +17,15 @@
     var GRID_COLOR = "#bbb"; //Colour of the grid
     var END_MOVE = 0.7; //Amount to move the track ending by
     var DEBOUNCE_TIME = 40;
+    var ARROW = "M0,0 l0,0.5 0.6,-0.5 -0.6,-0.5z";//Arrow Head, defined in terms of blocksize, to be scaled later
     var station_colors = ["#000","#eee"]; //Default colour scheme for stations
     var glow_colors = ["#03f","#709"]; //Default colour scheme for glow
-
+    
     //Dervied variables
     var CONNECTOR_THICKNESS = 2*STATION_RADIUS*CONNECTOR_RATIO;
     var INNER_RADIUS = STATION_RADIUS - STATION_LINE_THICKNESS;
     var INNER_CONECTOR = CONNECTOR_THICKNESS - STATION_LINE_THICKNESS*2.4;
-
-    //Array of stations for linking
-    var stations = new Array();
-    //Array for islands for rendering
-    var islands = new Array();
-
-    //Arrow Head, defined in terms of blocksize, to be scaled later
-    var arrow = "M0,0 l0,0.5 0.6,-0.5 -0.6,-0.5z";
-
+       
     //For browsers without Object.create
     if(typeof Object.create == "undefined" ) {
         Object.create = function( o ) {
@@ -41,29 +34,30 @@
             return new F();
         };
     }
-
+    
     function Coordinate(x,y){
         this.x = x;
         this.y = y;
     }
-
+    
     Coordinate.prototype.toString = function(){
         return this.x+","+this.y;
     };
-
+    
     function Island(name, color, fontSize, fontColor){
         this.name = name;
         this.color = color;
         this.fontSize = fontSize;
         this.fontColor = fontColor;
         this.edges = new Array();
+    //Not shown here: background (Island.paint)
     }
-
+    
     Island.prototype.addEdge = function(coords){
         coords = sqrToPixel(coords);
         this.edges.push(coords);
     };
-
+    
     Island.prototype.centroid = function(){
         try{
             if(this.edges.length<1) throw new Error("Polygon has no points!");
@@ -71,7 +65,7 @@
         catch(err){
             console.error(err.name+": "+err.message);
         }
-
+        
         /* Centriod forumla
 	Cx = 1/(6A) Sum(i=0->n-1){(x[i]+x[i+1])(x[i]y[i+1]-x[i+1]y[i])}
 	Cy = 1/(6A) Sum(i=0->n-1){(y[i]+y[i+1])(x[i]y[i+1]-x[i+1]y[i])}
@@ -85,22 +79,22 @@
             sumArea+= this.edges[i].x*this.edges[i+1].y - this.edges[i+1].x*this.edges[i].y;
         }
         this.edges.pop();//Remove repaeated element
-
+        
         return new Coordinate(1/(3*sumArea)*sumX, 1/(3*sumArea)*sumY);
     };
-
-    Island.prototype.paint = function(){
+    
+    Island.prototype.paint = function(paper){
         if(this.edges.length>2){//Polygons have at least 3 edges
             //Draw a polygon path and label it, text in the center
             var svg="M";
             for (i in this.edges){
                 svg += this.edges[i].toString()+" ";
             }
-            islands.push(paper.path(svg+"z").attr({
+            this.background = paper.path(svg+"z").attr({
                 "fill": this.color, 
                 "stroke":"none"
-            }));
-
+            });
+            
             var center = this.centroid();
             paper.text(center.x,center.y,this.name).attr({
                 "font-size":this.fontSize, 
@@ -108,23 +102,23 @@
             });
         }
     };
-
+    
     function Curve(dest,pt){ //pt is the point used to define the curve
         Coordinate.call(this,dest.x, dest.y);
         this.pt = pt;
     }
-
+    
     Curve.prototype = Object.create(Coordinate.prototype);
-
+    
     Curve.prototype.toString = function(){
         return this.pt+" "+Coordinate.prototype.toString.call(this);
     };
-
+    
     function Track(color, startingPt){
         this.color = color;
         this.segments = new Array(sqrToPixel(startingPt));
     }
-
+    
     Track.prototype.addSegment = function(dest, dir){
         dest = sqrToPixel(dest);
         //Determine what type of segment is added
@@ -138,9 +132,9 @@
         else if(dir == "E" || dir == "W")
             this.segments.push(new Curve(dest, new Coordinate(this.segments[this.segments.length-1].x,dest.y)));
     };
-
-    Track.prototype.paint = function(){
-        this.arrowHead();
+    
+    Track.prototype.paint = function(paper){
+        this.arrowHead(paper);
         var svg = "M"+this.segments[0]+" "; //First point is never a "curve"
         for(var i=1;i<this.segments.length;i++){
             //Use SVG quadratic Bézier curveto to draw curves
@@ -150,14 +144,14 @@
             else
                 svg+="L"+this.segments[i]+" ";
         }
-
+        
         paper.path(svg).attr({
             "stroke": this.color, 
             "stroke-width": TRACK_THICKNESS*BLOCKSIZE
         });
     };
-
-    Track.prototype.arrowHead = function(){
+    
+    Track.prototype.arrowHead = function(paper){
         if(this.segments.length>1){
             var elem = this.segments.pop();
             var trans;
@@ -169,16 +163,16 @@
                 trans = coordTrans(elem, this.segments[this.segments.length-1]);
                 elem = new Coordinate(trans[0].x,trans[0].y);
             }
-			
+            
             this.segments.push(elem);
-
-            paper.path(arrow).attr({
+            
+            paper.path(ARROW).attr({
                 fill: this.color, 
                 stroke: "none"
             }).transform("T"+elem.x +"," +elem.y+"S"+BLOCKSIZE+"R"+trans[1]);
         }
     };
-
+    
     function Station(ID ,name, href, labelDir, labelTer, links){
         this.name=name;
         this.href=href;
@@ -189,22 +183,22 @@
         this.ID = ID;
         //Terminals, Main glow, Link glow
         this.elements = [new Array(),new Array(),new Array()];
-
+    
     }
-
+    
     Station.prototype.addTerminal = function(trans){
         this.terminals.push(sqrToPixel(trans));
     };
     
     Station.prototype.linkGlow = function(){
-      this.elements[2].show();  
+        this.elements[2].show();  
     };
     
     Station.prototype.linkUnGlow = function(){
         this.elements[2].hide();
-    }
-
-    Station.prototype.paint = function(){
+    };
+    
+    Station.prototype.paint = function(paper){
         //Outer layer
         var prevPt=0;
         for(i in this.terminals){
@@ -240,7 +234,7 @@
             }
             prevPt = this.terminals[i];
         }
-    
+        
         //Inner layer
         prevPt = 0;
         for(i in this.terminals){
@@ -255,7 +249,7 @@
             }
             prevPt = this.terminals[i];
         }
-
+        
         //Print Station number
         for (var i in this.terminals) {
             this.elements[0].push(paper.text(this.terminals[i].x,this.terminals[i].y,this.ID+1).attr({
@@ -263,18 +257,18 @@
                 "font-weight":"bolder"
             }));
         }
-
+        
         //Print station name
-        var label = this.printLabel();
+        var label = this.printLabel(paper);
         this.elements[0].push(label);
-    
+        
         for (i in this.elements)
-            this.elements[i] = arrayToSet(this.elements[i]);
-    
+            this.elements[i] = arrayToSet(this.elements[i],paper);
+        
         //Glow created, but hidden at first
         this.elements[1].hide();
         this.elements[2].hide();
-
+        
         //Local references
         var mainElem=this.elements[1];
         var links = this.links;
@@ -287,7 +281,7 @@
                 if(typeof links[i] != "undefined")
                     links[i].linkGlow();
             }
-
+        
         }).mouseout(function(e){
             mainElem.hide();
             label.attr("font-weight","normal");
@@ -299,8 +293,8 @@
         //Add the link
         this.elements[0].attr("href", this.href);
     };
-
-    Station.prototype.printLabel=function(){
+    
+    Station.prototype.printLabel=function(paper){
         //Set default values
         if(typeof this.labelTer == "undefined")
             this.labelTer = 1;
@@ -312,7 +306,7 @@
         catch(err){
             console.error(err.name+": "+err.message);
         }
-
+        
         //Text alignments
         var x = this.terminals[this.labelTer-1].x, y = this.terminals[this.labelTer-1].y;
         var alignment = "middle";
@@ -362,18 +356,11 @@
         });
         return returnVal;
     };
-
+    
     function sqrToPixel(coords){
         return new Coordinate(coords.x*BLOCKSIZE,coords.y*BLOCKSIZE);
     }
-
-    function reOrderStations(){
-        for(var i=2;i>=0;i--){
-            for(var j in stations)
-                stations[j].elements[i].toFront();
-        }
-    }
-
+     
     function coordTrans(end, prev){
         //Moves coordinate back by end move, works even for eight directions
         var returnX = end.x, returnY = end.y;
@@ -384,7 +371,7 @@
             returnX+=END_MOVE*BLOCKSIZE;
             deg = 180;
         }
-
+        
         if(end.y-prev.y>0){
             returnY-=END_MOVE*BLOCKSIZE;
             deg = 90;
@@ -393,140 +380,188 @@
             returnY+=END_MOVE*BLOCKSIZE;
             deg = 270;
         }
-
+        
         return [new Coordinate(returnX,returnY),deg];
     }
-
+    
     //Convert the array of elements into a set
-    function arrayToSet(array) {
+    function arrayToSet(array, paper) {
         var set = paper.set();
         for (var i in array)
             set.push(array[i]);
         return set;
     }
-
-    //Resize canvas based on parent container
-    function canvasResize() {
-        var container = $("#subway").parent();
-        paper.changeSize(container.width(),container.width(),false,true);
-    }
-
-    //Max box reference
-    var boundBox = new Coordinate(0,0);
-    function maxCoord(newCoord) {
+     
+    env.OLSubway = function(){
+        //A printing queue which holds what raphael needs to render
+        this.paintQueue = new Array();
+        //Array of stations for linking
+        this.stations = new Array();
+        //Array for islands for rendering
+        this.islands = new Array();
+        //Max box reference
+        this.boundBox = new Coordinate(0,0);
+        //Display locations
+        this.display = "subway";
+        this.data = undefined;
+    //Not shown here: paper (Subway.create)
+    };
+    
+    //Brings the stations to the front, and glows to the back
+    env.OLSubway.prototype.reOrderStations = function(){
+        for(var i=2;i>=0;i--){
+            for(var j in this.stations)
+                this.stations[j].elements[i].toFront();
+        }
+    };
+    
+    //Determines the maximum x and y
+    env.OLSubway.prototype.maxCoord = function(newCoord) {
         //Only islands have floating point coordinates, we use floor, so that the +1 when defining size will correct it nicely
-        boundBox.x = Math.max(boundBox.x,Math.floor(newCoord.x));
-        boundBox.y = Math.max(boundBox.y,Math.floor(newCoord.y));
-    }
-
-    //A printing queue which holds what raphael needs to render
-    var paintQueue = new Array();
-
-    //Layer 1, Islands
-    $(".subway-islands").each(
-        function(index, Element){
-            //Build an island
-            var i = new Island($(Element).data("island-name"),$(Element).data("background-color"),$(Element).data("font-size"), $(Element).data("font-color"));
-            //Add the edges
-            $(Element).children().each(
-                function(index,Element){
-                    //Split the x and y and add it to the polygon
-                    var edgeCoords = $(Element).data("edge").split(",");
-                    var newCoord = new Coordinate(parseFloat(edgeCoords[0]),parseFloat(edgeCoords[1]));
-                    i.addEdge(newCoord);
-                    maxCoord(newCoord);
-                });
-            //Paint the island
-            paintQueue.push(i);
-        });
-
-    //Layer 2, Tracks
-    $(".subway-tracks").each(
-        function(index, Element){
-            //Build a new track
-            var startingCoord = $(Element).data("start-point").split(",");
-            var newCoord = new Coordinate(parseInt(startingCoord[0]), parseInt(startingCoord[1]));
-            var t = new Track($(Element).data("color"), newCoord);
-            maxCoord(newCoord);
-            //Process each segment
-            $(Element).children().each(
-                function(index,Element){
-                    var destCoords = $(Element).data("dest").split(",");
-                    newCoord = new Coordinate(parseInt(destCoords[0]),parseInt(destCoords[1]));
-                    t.addSegment(newCoord, $(Element).data("turn"));
-                    maxCoord(newCoord);
-                });
-            //Paint the track
-            paintQueue.push(t);
-        });
-
-    //Layer 3, Stations
-    $("#subway-stations").children().each(
-        function(index,Element){
-            var name = $(Element).text().replace(/\\n/g,"\n");
-            var href = $(Element).children("a").first().attr("href");
-            var labelDir = $(Element).data("label-dir");
-            var labelTer = $(Element).data("label-ter");
-            var links = $(Element).data("link");
-            //Numerize the link numbers, set to 0 base
-            if(typeof links !="undefined"){
-                links = links.toString().split(",");
-                for(var i in links)
-                    links[i] = parseInt(links[i]-1);
-            }
-            //Create the station
-            var s = new Station(stations.length, name,href,labelDir,labelTer,links);
-            //Add each terminal(start from 1 to prevent overflow)
-            var terminals = $(Element).data("pos").split(/[,;]/);
-            for(i=1;i<=terminals.length;i+=2){
-                var newCoord = new Coordinate(parseInt(terminals[i-1]),parseInt(terminals[i]));
-                s.addTerminal(newCoord);
-                maxCoord(newCoord);
-            }
-            stations.push(s);
-            paintQueue.push(s);
-        });
+        this.boundBox.x = Math.max(this.boundBox.x,Math.floor(newCoord.x));
+        this.boundBox.y = Math.max(this.boundBox.y,Math.floor(newCoord.y));
+    };
+    
+    //Resize canvas based on parent container
+    env.OLSubway.prototype.canvasResize = function(){
+        var container = $("#"+this.display).parent();
+        this.paper.changeSize(container.width(),container.width(),false,true);
+    };
+    
+    env.OLSubway.prototype.create = function(dis, dat){
+        if(typeof dis != "undefined")
+            this.display = dis;
+        if(typeof dat == "undefined")
+            this.data = dis;
+        else
+            this.data = dat
+        this.data = "#"+this.data;
         
-        for(var i in stations){
-            var s = stations[i];
+        //Reference frame
+        var frame = $(this.data);
+        //Save this frame of reference
+        var obj = this;
+        //Layer 1, Islands
+        $(".subway-islands",frame).each(
+            function(index, Element){
+                //Build an island
+                var i = new Island($(Element).data("island-name"),$(Element).data("background-color"),$(Element).data("font-size"), $(Element).data("font-color"));
+                //Add the edges
+                $(Element).children().each(
+                    function(index,Element){
+                        //Split the x and y and add it to the polygon
+                        var edgeCoords = $(Element).data("edge").split(",");
+                        var newCoord = new Coordinate(parseFloat(edgeCoords[0]),parseFloat(edgeCoords[1]));
+                        i.addEdge(newCoord);
+                        obj.maxCoord(newCoord);
+                    });
+                //Paint the island
+                obj.islands.push(i);
+                obj.paintQueue.push(i);
+            });
+            
+        //Layer 2, Tracks
+        $(".subway-tracks",frame).each(
+            function(index, Element){
+                //Build a new track
+                var startingCoord = $(Element).data("start-point").split(",");
+                var newCoord = new Coordinate(parseInt(startingCoord[0]), parseInt(startingCoord[1]));
+                var t = new Track($(Element).data("color"), newCoord);
+                obj.maxCoord(newCoord);
+                //Process each segment
+                $(Element).children().each(
+                    function(index,Element){
+                        var destCoords = $(Element).data("dest").split(",");
+                        newCoord = new Coordinate(parseInt(destCoords[0]),parseInt(destCoords[1]));
+                        t.addSegment(newCoord, $(Element).data("turn"));
+                        obj.maxCoord(newCoord);
+                    });
+                //Paint the track
+                obj.paintQueue.push(t);
+            });
+            
+        //Layer 3, Stations
+        $("#subway-stations",frame).children().each(
+            function(index,Element){
+                var name = $(Element).text().replace(/\\n/g,"\n");
+                var href = $(Element).children("a").first().attr("href");
+                var labelDir = $(Element).data("label-dir");
+                var labelTer = $(Element).data("label-ter");
+                var links = $(Element).data("link");
+                //Numerize the link numbers, set to 0 base
+                if(typeof links !="undefined"){
+                    links = links.toString().split(",");
+                    for(var i in links)
+                        links[i] = parseInt(links[i]-1);
+                }
+                //Create the station
+                var s = new Station(obj.stations.length, name,href,labelDir,labelTer,links);
+                //Add each terminal(start from 1 to prevent overflow)
+                var terminals = $(Element).data("pos").split(/[,;]/);
+                for(i=1;i<=terminals.length;i+=2){
+                    var newCoord = new Coordinate(parseInt(terminals[i-1]),parseInt(terminals[i]));
+                    s.addTerminal(newCoord);
+                    obj.maxCoord(newCoord);
+                }
+                obj.stations.push(s);
+                obj.paintQueue.push(s);
+            });
+    
+        //Link up the stations
+        for(var i in this.stations){
+            var s = this.stations[i];
             for(var j in s.links){
                 if(i==j)
                     s.links[j] = undefined;
                 else
-                    s.links[j] = stations[s.links[j]]                   
+                    s.links[j] = this.stations[s.links[j]]                   
             }
         }
-    
-    //Snap size, build canvas    
-    var width = boundBox.x+1, height = boundBox.y+1;
-    var paper = ScaleRaphael("subway",width*BLOCKSIZE,height*BLOCKSIZE);
-    for (var i in paintQueue) {
-        paintQueue[i].paint();
-    }
-    reOrderStations();
-
-    //Debug grid
-    if($("#subway").data("debug")){
-        for (i = 0; i <= width; i++){
-            paper.path("M"+i*BLOCKSIZE+", 0 L"+ i*BLOCKSIZE+", "+height*BLOCKSIZE).attr({
-                "stroke":GRID_COLOR, 
-                "stroke-width":2
-            }).toBack();
+        
+        //Snap size, build canvas    
+        var width = this.boundBox.x+1, height = this.boundBox.y+1;
+        this.paper = ScaleRaphael(this.display,width*BLOCKSIZE,height*BLOCKSIZE);
+        for (i in this.paintQueue) {
+            this.paintQueue[i].paint(this.paper);
         }
-   
-        for(i=0;i<=height;i++){
-            paper.path("M0, "+i*BLOCKSIZE+" L"+width*BLOCKSIZE+", "+i*BLOCKSIZE).attr({
-                "stroke":GRID_COLOR, 
-                "stroke-width":2
-            }).toBack();
+        this.reOrderStations();
+    
+        //Debug grid
+        if($(this.data).data("debug")){
+            for (i = 0; i <= width; i++){
+                this.paper.path("M"+i*BLOCKSIZE+", 0 L"+ i*BLOCKSIZE+", "+height*BLOCKSIZE).attr({
+                    "stroke":GRID_COLOR, 
+                    "stroke-width":2
+                }).toBack();
+            }
+        
+            for(i=0;i<=height;i++){
+                this.paper.path("M0, "+i*BLOCKSIZE+" L"+width*BLOCKSIZE+", "+i*BLOCKSIZE).attr({
+                    "stroke":GRID_COLOR, 
+                    "stroke-width":2
+                }).toBack();
+            }
+        
+            //Shift islands behind grid
+            for (i in this.islands) 
+                this.islands[i].background.toBack();
         }
     
-        //Shift islands behind grid
-        for (i in islands) 
-            islands[i].toBack();
+        //Resize and add debounced autoResize
+        this.canvasResize();
+        window.onresize = $.debounce(DEBOUNCE_TIME,function(){obj.canvasResize()});
+        
+        if(("#"+this.display) != this.data )
+            $(this.data).hide();
     }
-
-    //Resize and add debounced autoResize
-    canvasResize();
-    window.onresize = $.debounce(DEBOUNCE_TIME,canvasResize);
+    
+    env.OLSubway.prototype.destroy = function(){
+        this.paper.remove();
+        this.paintQueue = new Array();
+        this.stations = new Array();
+        this.islands = new Array();
+        this.boundBox = new Coordinate(0,0);
+        this.display = "subway";
+        this.data = undefined;
+    }
 })(this);

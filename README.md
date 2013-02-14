@@ -1,4 +1,4 @@
-OLsubwaymap
+OLsubway.js
 ===========
 
 Javascript app to display an interactive subway map. Javascript reads from HTML and uses Raphael to render a map.
@@ -25,18 +25,33 @@ Include the Javascript libraries in your HTML file header. They are provided in 
 ```xml
 <script type="text/javascript" src="./resources/jquery.min.js"></script>
 <script type="text/javascript" src="./resources/raphael-min.js"></script>
+<script type="text/javascript" src="./olsubway-min.js"></script>
 ```
-Include *olsubway-min.js* in the HTML file body, at the end.
->Note: the script has to be at the end or it will not work.
 
+Create a display `<div>` tag with an ID. The map will be rendered within this tag.
 ```xml
-<script type="text/javascript" src="./olsubway.js"></script>
+<div ID="subway-display"></div>
 ```
-Create a `<div>` tag. The map will be contained within the tag. `data-debug="true"` can be included to display a grid for referencing. The width and height of the canvas will be determined automatically from the elements created.
+
+Optionally create another `<div>` tag to contain the data for the map. If you choose not to create a separate tag, data will be read from the display tag. `data-debug="true"` can be included to display a grid for referencing. The width and height of the canvas will be determined automatically from the elements created.
 ```xml
 <div ID="subway" data-debug="true"></div>
 ```
-All further elements shall go between this tag.
+> Note: Placing data in the display tag will cause it be be replaced by the map when it is created.
+
+Finally, write a script to create a subway map. Each OLSubway is a different object, so multiple maps can be created. (The second parameter of `OLSubway.create()` can be left blank. Data will then be read from the display tag.) Contents of the data tag are automatically hidden upon creation of the map.
+```javascript
+var sub = new OLSubway();
+sub.create("subway-display","subway");
+```
+
+You may also use the `destroy()` method to remove the map, which will allow you to use the object to create yet a new map.
+```javascript
+sub.destroy();
+sub.create("subway2");
+```
+
+Elements below should be contained within the data tag.
 
 ##Stations
 Stations are where your data-points are shown. This app supports stations with multiple "terminals", i.e. A station may take up more than a single point. Terminals are connected to each other via connectors in a linear fashion. When the mouse is hovered over a station, the station will "glow".
@@ -50,7 +65,7 @@ Hyperlinks can be added to the stations. Include them using `<a href="url"></a>`
 Refer to the example below:
 ```xml
 <ul ID="subway-stations">
-	<li data-pos="2,2; 4,4; 2,6" data-label-dir="E" data-label-ter="3" ><a href="http://www.google.com/">Google</a></li>
+	<li data-pos="2,2; 4,4; 2,6" data-label-dir="E" data-label-ter="3" ><a href="http://openlectures.org/">Google</a></li>
 	<li data-pos="13, 8; 13,9" data-label-ter = "2">ABC</li>
 	<li data-pos="11,16" data-label-dir="SE">DEF</li>
 	<li data-pos="2,18"></li>
@@ -118,7 +133,7 @@ Each island is an unordered list, under `class="subway-tracks"`, with each eleme
 > As islands do not have to be defined along the grid, you may use decimals for the coordinates.
 
 ##Scaling
-The map is scaled automatically based on the width of the container it is in, i.e. The container of the `<div>` tag.
+The map is scaled automatically based on the width of the container it is in, i.e. The container of the display `<div>` tag.
 
 The map is rescaled(debounced) when the window is resized. Thus, in any application where the map container's width is changed when resizing the window, the map will be scaled accordingly to fit the width of the container.
 >This means that the map will fit exactly into the container horizontally, but not vertically.
