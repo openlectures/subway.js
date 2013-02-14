@@ -197,11 +197,11 @@
     };
     
     Station.prototype.linkGlow = function(){
-      this.elements[1].show();  
+      this.elements[2].show();  
     };
     
     Station.prototype.linkUnGlow = function(){
-        this.elements[1].hide();
+        this.elements[2].hide();
     }
 
     Station.prototype.paint = function(){
@@ -284,17 +284,16 @@
             mainElem.show();
             label.attr("font-weight","bolder");
             for(var i in links){
-                var j = links[i];
-                if(j!=this.ID && typeof stations[j] != "undefined")
-                    stations[j].elements[2].show();
+                if(typeof links[i] != "undefined")
+                    links[i].linkGlow();
             }
+
         }).mouseout(function(e){
             mainElem.hide();
             label.attr("font-weight","normal");
             for(var i in links){
-                var j = links[i];
-                if(j!=this.ID && typeof stations[j] != "undefined")
-                    stations[j].elements[2].hide();
+                if(typeof links[i] != "undefined")
+                    links[i].linkUnGlow();
             }
         });
         //Add the link
@@ -487,6 +486,16 @@
             stations.push(s);
             paintQueue.push(s);
         });
+        
+        for(var i in stations){
+            var s = stations[i];
+            for(var j in s.links){
+                if(i==j)
+                    s.links[j] = undefined;
+                else
+                    s.links[j] = stations[s.links[j]]                   
+            }
+        }
     
     //Snap size, build canvas    
     var width = boundBox.x+1, height = boundBox.y+1;
