@@ -1,16 +1,10 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <script type="text/javascript" src="./resources/jquery.min.js"></script>
-        <script type="text/javascript" src="./resources/raphael-min.js"></script>
-        <script type="text/javascript" src="./resources/scale.raphael.js"></script>
-        <script type="text/javascript" src="./resources/jquery.ba-throttle-debounce.min.js"></script>
-        <script type="text/javascript" src="./olsubway.js"></script>
-
         <title>Subway Map Demo</title>
     </head>
     <body>
-        <div ID="subway" data-debug="true">
+        <div id="subway" data-debug="true">
             <ul class="subway-islands" data-island-name="Test" data-background-color="#ddd" data-font-size="50px" data-font-color="#fff">
                 <li data-edge="1,1"></li>
                 <li data-edge="18.5,1"></li>
@@ -37,17 +31,17 @@
                 <li data-dest="2,18"></li>
             </ul>
             <ul class="subway-tracks" data-color="#00f" data-start-point="2,2">
-                <li data-dest = "2,18"></li>
+                <li data-dest="2,18"></li>
             </ul>
             <ul class="subway-tracks" data-color="#a4c" data-start-point="4,4">
-                <li data-dest = "7,4"></li>
-                <li data-dest = "9,6" data-turn="S"></li>
-                <li data-dest = "11,8" data-turn ="E"></li>
-                <li data-dest = "14,8"></li>
-                <li data-dest = "16,10" data-turn="S"></li>
-                <li data-dest = "10,16" data-turn="E"></li>
-                <li data-dest = "6,16"></li>
-                <li data-dest = "2,18" data-turn="S"></li>
+                <li data-dest="7,4"></li>
+                <li data-dest="9,6" data-turn="S"></li>
+                <li data-dest="11,8" data-turn ="E"></li>
+                <li data-dest="14,8"></li>
+                <li data-dest="16,10" data-turn="S"></li>
+                <li data-dest="10,16" data-turn="E"></li>
+                <li data-dest="6,16"></li>
+                <li data-dest="2,18" data-turn="S"></li>
             </ul>
             <ul class="subway-tracks" data-color = "#3bf" data-start-point = "6,18">
                 <li data-dest = "8,20" data-turn = "E"></li>
@@ -59,13 +53,18 @@
                 <li data-pos="11,16" data-label-dir="SE">DEF</li>
                 <li data-pos="2,18" data-link="2"></li>
                 <li data-pos="6,18"></li>
-                <li data-pos="8,20; 9,18" data-label-dir = "S" data-link = "1,2,3,5"><a href="https://github.com/openlectures/OLsubway.js">OLSubway.js</a></li>
+                <li data-pos="8,20; 9,18" data-label-dir = "S" data-link = "1,2,3,5"><a href="https://github.com/openlectures/subway.js">OLSubway.js</a></li>
             </ul>
         </div>
         <div style ="width:75%; margin-left:auto; margin-right:auto; height:100%">
-            <div ID="subway-display"></div>
+            <div id="subway-display"></div>
         </div>
-        <script type="text/javascript">
+        <script src="./resources/jquery-1.9.1.min.js"></script>
+        <script src="./resources/raphael.min.js"></script>
+        <script src="./subway.min.js"></script>
+        <script async src="./resources/scale.raphael.js"></script>
+        <script async src="./resources/jquery.ba-throttle-debounce.min.js"></script>
+        <script async>
             var sub = new OLSubway();
             sub.create("subway-display","subway");
         </script>

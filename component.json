@@ -1,0 +1,10 @@
+{
+  "name": "subway.js",
+  "version": "1.0.0",
+  "main": "./subway.min.js",
+  "dependencies": {
+    "jquery": "~1.9.1",
+    "raphael": "~2.1.0",
+    "jquery.ba-throttle-debounce": "~1.1"
+  }
+}
