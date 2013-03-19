@@ -61,12 +61,6 @@
         </div>
         <script src="./resources/jquery-1.9.1.min.js"></script>
         <script src="./resources/raphael.min.js"></script>
-        <script src="./subway.min.js"></script>
-        <script async src="./resources/scale.raphael.js"></script>
-        <script async src="./resources/jquery.ba-throttle-debounce.min.js"></script>
-        <script async>
-            var sub = new OLSubway();
-            sub.create("subway-display","subway");
-        </script>
+        <script async src="./subway.min.js" onload="new OLSubway().create('subway-display','subway')"></script>
     </body>
 </html>
