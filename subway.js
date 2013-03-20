@@ -531,7 +531,7 @@
         for (var i = 0; i < this.stations.length; i++) {
             var s = this.stations[i];
             for (var j = 0; typeof s.links !== "undefined" && j < s.links.length; j++) {
-                if (i === j) {
+                if (i === s.links[j]) {
                     s.links[j] = undefined;
                 }
                 else {
@@ -572,7 +572,13 @@
 
         //Resize and add debounced autoResize
         this.canvasResize();
-        window.onresize = $.debounce(DEBOUNCE_TIME, function() {
+        var lib;
+        if (typeof $.debounce === "undefined") {
+            lib = Cowboy;
+        } else {
+            lib = $;
+        }
+        window.onresize = lib.debounce(DEBOUNCE_TIME, function() {
             obj.canvasResize();
         });
 

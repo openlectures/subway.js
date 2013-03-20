@@ -2,6 +2,9 @@
 <html>
     <head>
         <title>Subway Map Demo</title>
+        <script async src="./resources/jquery-1.9.1.min.js"></script>
+        <script async src="./resources/raphael.min.js"></script>
+        <script async src="./subway.min.js" ></script>
     </head>
     <body>
         <div id="subway" data-debug="true">
@@ -53,14 +56,15 @@
                 <li data-pos="11,16" data-label-dir="SE">DEF</li>
                 <li data-pos="2,18" data-link="2"></li>
                 <li data-pos="6,18"></li>
-                <li data-pos="8,20; 9,18" data-label-dir = "S" data-link = "1,2,3,5"><a href="https://github.com/openlectures/subway.js">OLSubway.js</a></li>
+                <li data-pos="8,20; 9,18" data-label-dir = "S" data-link = "1,2,3,5"><a href="https://github.com/openlectures/subway.js">subway.js</a></li>
             </ul>
         </div>
         <div style ="width:75%; margin-left:auto; margin-right:auto; height:100%">
             <div id="subway-display"></div>
         </div>
-        <script src="./resources/jquery-1.9.1.min.js"></script>
-        <script src="./resources/raphael.min.js"></script>
-        <script async src="./subway.min.js" onload="new OLSubway().create('subway-display','subway')"></script>
-    </body>
+        <script>
+            window.onload = function(){
+                new OLSubway().create('subway-display','subway');
+            };
+        </script>
 </html>
