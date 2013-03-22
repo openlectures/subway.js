@@ -47,11 +47,12 @@
         return this.x + "," + this.y;
     };
 
-    function Island(name, color, fontSize, fontColor) {
+    function Island(name, color, fontSize, fontColor, sharp) {
         this.name = name;
         this.color = color;
         this.fontSize = fontSize;
         this.fontColor = fontColor;
+        this.sharp = sharp;
         this.edges = [];
         //Not shown here: background (Island.paint)
     }
@@ -87,8 +88,13 @@
     Island.prototype.paint = function(paper) {
         if (this.edges.length > 2) {//Polygons have at least 3 edges
             //Draw a polygon path and label it, text in the center
-            var svg = "M";
-            for (var i = 0; i < this.edges.length; i++) {
+            var svg = "M" + this.edges[0].toString() + " ";
+
+            if (typeof this.sharp === "undefined" || !this.sharp) {
+                svg += "R";
+            }
+
+            for (var i = 1; i < this.edges.length; i++) {
                 svg += this.edges[i].toString() + " ";
             }
             this.background = paper.path(svg + "z").attr({
@@ -442,16 +448,33 @@
     };
 
     env.OLSubway.prototype.create = function(dis, dat) {
-        if (typeof dis !== "undefined") {
-            this.display = dis;
+        if (typeof dis === "undefined") {
+            return;
         }
+
         if (typeof dat === "undefined") {
-            this.data = dis;
+            dat = dis;
         }
-        else {
-            this.data = dat;
+
+        if (document.readyState === "complete") {
+            this.createWrapped(dis, dat);
+        } else {
+            var ref = this;
+            var load = function() {
+                ref.createWrapped(dis, dat);
+            };
+            if (window.addEventListener) {
+                window.addEventListener('load', load);
+            }
+            else if (window.attachEvent) {
+                window.attachEvent('onload', load);
+            }
         }
-        this.data = "#" + this.data;
+    };
+
+    env.OLSubway.prototype.createWrapped = function(dis, dat) {
+        this.display = dis;
+        this.data = "#" + dat;
 
         //Reference frame
         var frame = $(this.data);
@@ -461,7 +484,7 @@
         $(".subway-islands", frame).each(
                 function(index, Element) {
                     //Build an island
-                    var i = new Island($(Element).data("island-name"), $(Element).data("background-color"), $(Element).data("font-size"), $(Element).data("font-color"));
+                    var i = new Island($(Element).data("island-name"), $(Element).data("background-color"), $(Element).data("font-size"), $(Element).data("font-color"), $(Element).data("sharp"));
                     //Add the edges
                     $(Element).children().each(
                             function(index, Element) {
@@ -578,9 +601,17 @@
         } else {
             lib = $;
         }
-        window.onresize = lib.debounce(DEBOUNCE_TIME, function() {
+
+        var oldFunc = window.onresize;
+        var newFunc = lib.debounce(DEBOUNCE_TIME, function() {
             obj.canvasResize();
         });
+        window.onresize = function() {
+            newFunc();
+            if (typeof oldFunc === "function") {
+                oldFunc();
+            }
+        };
 
         if (("#" + this.display) !== this.data) {
             $(this.data).hide();

@@ -2,13 +2,15 @@
 <html>
     <head>
         <title>Subway Map Demo</title>
-        <script async src="./resources/jquery-1.9.1.min.js"></script>
-        <script async src="./resources/raphael.min.js"></script>
-        <script async src="./subway.min.js" ></script>
+        <script src="./resources/jquery-1.9.1.min.js"></script>
+        <script src="./resources/raphael.min.js"></script>
+        <script src="./resources/scale.raphael.js"></script>
+        <script src="./resources/jquery.ba-throttle-debounce.min.js"></script>
+        <script src="./subway.js"></script>
     </head>
     <body>
         <div id="subway" data-debug="true">
-            <ul class="subway-islands" data-island-name="Test" data-background-color="#ddd" data-font-size="50px" data-font-color="#fff">
+            <ul class="subway-islands" data-island-name="Test" data-background-color="#ddd" data-font-size="50px" data-font-color="#fff" data-sharp="true">
                 <li data-edge="1,1"></li>
                 <li data-edge="18.5,1"></li>
                 <li data-edge="18.5,20"></li>

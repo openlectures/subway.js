@@ -15,18 +15,18 @@
     
     var nestedWrapper;
       
-    if (Raphael.type == "VML"){
+    if (Raphael.type === "VML"){
       wrapper.innerHTML = "<rvml:group style='position : absolute; width: 1000px; height: 1000px; top: 0px; left: 0px' coordsize='1000,1000' class='rvml' id='vmlgroup'><\/rvml:group>";
-      nestedWrapper = document.getElementById("vmlgroup");
+      nestedWrapper = wrapper.getElementsByTagName("rvml:group")[0];
     }else{
       wrapper.innerHTML = "<div id='svggroup'><\/div>";
-      nestedWrapper = document.getElementById("svggroup");
+      nestedWrapper = wrapper.getElementsByTagName("div")[0];
     }
  
     var paper = new Raphael(nestedWrapper, width, height);
     var vmlDiv;
     
-    if (Raphael.type == "SVG"){
+    if (Raphael.type === "SVG"){
       paper.canvas.setAttribute("viewBox", "0 0 "+width+" "+height);
     }else{
       vmlDiv = wrapper.getElementsByTagName("div")[0];
@@ -42,9 +42,9 @@
       var newHeight = parseInt(height * scale);
       var newWidth = parseInt(width * scale);
       
-      if (Raphael.type == "VML"){
+      if (Raphael.type === "VML"){
          // scale the textpaths
-       var txt = document.getElementsByTagName("textpath");
+       var txt = wrapper.getElementsByTagName("textpath");
         for (var i in txt){
           var curr = txt[i];
           if (curr.style){
@@ -86,17 +86,17 @@
         wrapper.style.left = parseInt((w - newWidth) / 2) + "px";
         wrapper.style.top = parseInt((h - newHeight) / 2) + "px";
       }
-    }
+    };
     
     paper.scaleAll = function(amount){
       paper.changeSize(width * amount, height * amount);
-    }
-    
+    };
+
     paper.changeSize(width, height);
     
     paper.w = width;
     paper.h = height;
     
     return paper;
-  }
+  };
 })();

@@ -38,7 +38,7 @@ Optionally create another `<div>` tag to contain the data for the map. If you ch
 ```
 > Note: Placing data in the display tag will cause it be be replaced by the map when it is created.
 
-Finally, write a script to create a subway map. Each OLSubway is a different object, so multiple maps can be created. (The second parameter of `OLSubway.create()` can be left blank. Data will then be read from the display tag.) Contents of the data tag are automatically hidden upon creation of the map.
+Finally, write a script to create a subway map. Each OLSubway is a different object, so multiple maps can be created. (The second parameter of `OLSubway.create()` can be left blank. Data will then be read from the display tag.) Contents of the data tag are automatically hidden upon creation of the map. Note that `OLSubway.create()` will always be deferred till the document has loaded.
 ```javascript
 var sub = new OLSubway();
 sub.create("subway-display","subway");
@@ -119,7 +119,7 @@ Refer to the example below:
 ## Islands
 Islands can be used to group certain "stations". All islands should be defined between a `<ul id="subway-islands"></ul>` tag.
 
-Each island is an unordered list, under `class="subway-tracks"`, with each element defining an edge (with coordinates) of the island. Specify the name, background colour, label font size and colour. The name of the island will be displayed at the centroid of the polygon which defines the island. Refer to the exmaple below.
+Each island is an unordered list, under `class="subway-tracks"`, with each element defining an edge (with coordinates) of the island. Specify the name, background colour, label font size and colour. The name of the island will be displayed at the centroid of the polygon which defines the island. Islands will be rounded during processing in a manner that ensures the outline passes through all points specified. To turn off automatic rounding, add `data-sharp="true"` to the `<ul>` tag. Refer to the exmaple below.
 ```html
 <ul class="subway-islands" data-island-name="Test" data-background-color="#ddd" data-font-size="50px" data-font-color="#fff">
     <li data-edge="1,1"></li>
