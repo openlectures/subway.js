@@ -159,7 +159,8 @@
 
         paper.path(svg).attr({
             "stroke": this.color,
-            "stroke-width": TRACK_THICKNESS * BLOCKSIZE
+            "stroke-width": TRACK_THICKNESS * BLOCKSIZE,
+            "stroke-linejoin": "round"
         });
     };
 
@@ -379,26 +380,14 @@
 
     function coordTrans(end, prev) {
         //Moves coordinate back by end move, works even for eight directions
-        var returnX = end.x, returnY = end.y;
-        var deg = 0;
-        if (end.x - prev.x > 0) {
-            returnX -= END_MOVE * BLOCKSIZE;
-        }
-        else if (end.x - prev.x < 0) {
-            returnX += END_MOVE * BLOCKSIZE;
-            deg = 180;
-        }
+        var dx = end.x - prev.x;
+        var dy = end.y - prev.y;
 
-        if (end.y - prev.y > 0) {
-            returnY -= END_MOVE * BLOCKSIZE;
-            deg = 90;
-        }
-        else if (end.y - prev.y < 0) {
-            returnY += END_MOVE * BLOCKSIZE;
-            deg = 270;
-        }
+        var deg = Math.atan2(dy, dx);
+        dy = END_MOVE * BLOCKSIZE * Math.sin(deg);
+        dx = END_MOVE * BLOCKSIZE * Math.cos(deg);
 
-        return [new Coordinate(returnX, returnY), deg];
+        return [new Coordinate(end.x - dx, end.y - dy), deg * (180 / Math.PI)];
     }
 
     //Convert the array of elements into a set
