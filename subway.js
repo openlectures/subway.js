@@ -11,19 +11,20 @@
 
     //Magic variables here
     var BLOCKSIZE = 20; //Basic scale for all graphics
-    var TRACK_THICKNESS = 0.45; //Relative thickness of the track to one block
+    var TRACK_THICKNESS = 0.5; //Relative thickness of the track to one block
     var STATION_RADIUS = 0.4; //Relative radius of the station
     var CONNECTOR_RATIO = 0.55; //Relative thickness of connector, to station
     var STATION_LINE_THICKNESS = 0.1; //Absolute thickness of station boundary
     var LABEL_FONT_SIZE = 14; //Font size for station labels
     var GRID_COLOR = "#bbb"; //Colour of the grid
-    var END_MOVE = 0.7; //Amount to move the track ending by
     var DEBOUNCE_TIME = 40;
-    var ARROW = "M0,0 l0,0.5 0.6,-0.5 -0.6,-0.5z";//Arrow Head, defined in terms of blocksize, to be scaled later
+    var ARROW = "M0,0 l0,0.5 0.5,-0.5 -0.5,-0.5z";//Arrow Head, defined in terms of blocksize, to be scaled later
     var station_colors = ["#000", "#eee"]; //Default colour scheme for stations
     var glow_colors = ["#03f", "#709"]; //Default colour scheme for glow
 
     //Dervied variables
+    var ARROW_SCALE = 2 * TRACK_THICKNESS; //The size of the arrow's base, relative to the track
+    var END_MOVE = ARROW_SCALE / 2 + STATION_RADIUS; //Amount to move the track ending by
     var CONNECTOR_THICKNESS = 2 * STATION_RADIUS * CONNECTOR_RATIO;
     var INNER_RADIUS = STATION_RADIUS - STATION_LINE_THICKNESS;
     var INNER_CONECTOR = CONNECTOR_THICKNESS - STATION_LINE_THICKNESS * 2.4;
@@ -181,8 +182,8 @@
 
             paper.path(ARROW).attr({
                 fill: this.color,
-                stroke: "none"
-            }).transform("T" + elem.x + "," + elem.y + "S" + BLOCKSIZE + "R" + trans[1]);
+                stroke: this.color
+            }).transform("T" + elem.x + "," + elem.y + "S" + BLOCKSIZE * ARROW_SCALE + "," + BLOCKSIZE * ARROW_SCALE + "," + elem.x + "," + elem.y + "R" + trans[1] + "," + elem.x + "," + elem.y);
         }
     };
 
@@ -384,8 +385,8 @@
         var dy = end.y - prev.y;
 
         var deg = Math.atan2(dy, dx);
-        dy = END_MOVE * BLOCKSIZE * Math.sin(deg);
-        dx = END_MOVE * BLOCKSIZE * Math.cos(deg);
+        dy = (END_MOVE * BLOCKSIZE + 1) * Math.sin(deg);
+        dx = (END_MOVE * BLOCKSIZE + 1) * Math.cos(deg);
 
         return [new Coordinate(end.x - dx, end.y - dy), deg * (180 / Math.PI)];
     }
