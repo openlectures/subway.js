@@ -10,9 +10,9 @@
     "use strict";
 
     //Magic variables here
-    var BLOCKSIZE = 20; //Basic scale for all graphics
+    var BLOCKSIZE = 30; //Basic scale for all graphics
     var TRACK_THICKNESS = 0.5; //Relative thickness of the track to one block
-    var STATION_RADIUS = 0.4; //Relative radius of the station
+    var STATION_RADIUS = 0.45; //Relative radius of the station
     var CONNECTOR_RATIO = 0.55; //Relative thickness of connector, to station
     var STATION_LINE_THICKNESS = 0.1; //Absolute thickness of station boundary
     var LABEL_FONT_SIZE = 14; //Font size for station labels
@@ -27,7 +27,7 @@
     var END_MOVE = ARROW_SCALE / 2 + STATION_RADIUS; //Amount to move the track ending by
     var CONNECTOR_THICKNESS = 2 * STATION_RADIUS * CONNECTOR_RATIO;
     var INNER_RADIUS = STATION_RADIUS - STATION_LINE_THICKNESS;
-    var INNER_CONECTOR = CONNECTOR_THICKNESS - STATION_LINE_THICKNESS * 2.4;
+    var INNER_CONECTOR = CONNECTOR_THICKNESS - STATION_LINE_THICKNESS * 2;
 
     //For browsers without Object.create
     if (typeof Object.create === "undefined") {
@@ -400,6 +400,10 @@
         return set;
     }
 
+    function parseBoolean(variable) {
+        return (typeof variable !== "undefined") && (variable !== false);
+    }
+
     env.OLSubway = function() {
         //A printing queue which holds what raphael needs to render
         this.paintQueue = [];
@@ -474,7 +478,7 @@
         $(".subway-islands", frame).each(
                 function(index, Element) {
                     //Build an island
-                    var i = new Island($(Element).data("island-name"), $(Element).data("background-color"), $(Element).data("font-size"), $(Element).data("font-color"), $(Element).data("sharp"));
+                    var i = new Island($(Element).data("island-name"), $(Element).data("background-color"), $(Element).data("font-size"), $(Element).data("font-color"), parseBoolean($(Element).data("sharp")));
                     //Add the edges
                     $(Element).children().each(
                             function(index, Element) {
@@ -555,14 +559,23 @@
 
         //Snap size, build canvas    
         var width = this.boundBox.x + 1, height = this.boundBox.y + 1;
-        this.paper = new ScaleRaphael(this.display, width * BLOCKSIZE, height * BLOCKSIZE);
+        var noScale = parseBoolean($(this.data).data("noscale"));
+
+        if (noScale) {
+            this.paper = new Raphael(this.display, width * BLOCKSIZE, height * BLOCKSIZE);
+        }
+        else {
+            this.paper = new ScaleRaphael(this.display, width * BLOCKSIZE, height * BLOCKSIZE);
+        }
+
+        //Paint the elements
         for (i = 0; i < this.paintQueue.length; i++) {
             this.paintQueue[i].paint(this.paper);
         }
         this.reOrderStations();
 
         //Debug grid
-        if ($(this.data).data("debug")) {
+        if (parseBoolean($(this.data).data("debug"))) {
             for (i = 0; i <= width; i++) {
                 this.paper.path("M" + i * BLOCKSIZE + ", 0 L" + i * BLOCKSIZE + ", " + height * BLOCKSIZE).attr({
                     "stroke": GRID_COLOR,
@@ -583,25 +596,28 @@
             }
         }
 
-        //Resize and add debounced autoResize
-        this.canvasResize();
-        var lib;
-        if (typeof $.debounce === "undefined") {
-            lib = Cowboy;
-        } else {
-            lib = $;
-        }
-
-        var oldFunc = window.onresize;
-        var newFunc = lib.debounce(DEBOUNCE_TIME, function() {
-            obj.canvasResize();
-        });
-        window.onresize = function() {
-            newFunc();
-            if (typeof oldFunc === "function") {
-                oldFunc();
+        if (!noScale) {
+            //Resize and add debounced autoResize
+            this.canvasResize();
+            var lib;
+            if (typeof $.debounce === "undefined") {
+                lib = Cowboy;
+            } else {
+                lib = $;
             }
-        };
+
+            var oldFunc = window.onresize;
+            var newFunc = lib.debounce(DEBOUNCE_TIME, function() {
+                obj.canvasResize();
+            });
+            window.onresize = function() {
+                newFunc();
+                if (typeof oldFunc === "function") {
+                    oldFunc();
+                }
+            };
+
+        }
 
         if (("#" + this.display) !== this.data) {
             $(this.data).hide();
