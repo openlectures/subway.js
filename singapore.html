@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Subway Map Demo</title>
+        <title>Singapore MRT System Map</title>
         <script src="./resources/jquery-1.9.1.min.js"></script>
         <script src="./resources/raphael.min.js"></script>
         <script src="./resources/scale.raphael.js"></script>
@@ -10,195 +10,345 @@
     </head>
     <body>
         <div id="subway" data-debug="true">
-            <ul class="subway-tracks" data-color="#f3b" data-start-point="2,2">
-                <li data-dest="5,2"></li>
-                <li data-dest="6,3" data-turn="S"></li>
-                <li data-dest="6,6"></li>
-                <li data-dest="9,9" data-turn="E"></li>
-                <li data-dest="16,9"></li>
-                <li data-dest="17,10" data-turn="S"></li>
-                <li data-dest="15,12" data-turn="W"></li>
-                <li data-dest="11,16" data-turn="S"></li>
-                <li data-dest="9,18" data-turn="W"></li>
-                <li data-dest="2,18"></li>
+            <ul class="subway-tracks ew-line" data-color="#019D4A" data-start-point="2,2">
+                <li data-dest="">Pasir Ris</li>
+                <li data-dest="">Tampines</li>
+                <li data-dest="">Simei</li>
+                <li data-dest="">Tanah Merah</li>
+                <li data-dest="">Expo</li>
+                <li data-dest="">Changi Airport</li>
+                <li data-dest="">Bedok</li>
+                <li data-dest="">Kembangan</li>
+                <li data-dest="">Eunos</li>
+                <li data-dest="">Paya Lebar</li>
+                <li data-dest="">Aljunied</li>
+                <li data-dest="">Kallang</li>
+                <li data-dest="">Lavender</li>
+                <li data-dest="">Bugis</li>
+                <li data-dest="">City Hall</li>
+                <li data-dest="">Raffles Place</li>
+                <li data-dest="">Tanjong Pagar</li>
+                <li data-dest="">Outram Park</li>
+                <li data-dest="">Tiong Bahru</li>
+                <li data-dest="">Redhill</li>
+                <li data-dest="">Queenstown</li>
+                <li data-dest="">Commonwealth</li>
+                <li data-dest="">Buona Vista</li>
+                <li data-dest="">Dover</li>
+                <li data-dest="">Clementi</li>
+                <li data-dest="">Jurong East</li>
+                <li data-dest="">Chinese Garden</li>
+                <li data-dest="">Lakeside</li>
+                <li data-dest="">Boon Lay</li>
+                <li data-dest="">Pioneer</li>
+                <li data-dest="">Joo Koon</li>
             </ul>
-            <ul id="subway-stations">
-                <li data-pos="2,2; 4,4; 2,6" data-label-dir="E" data-label-ter="3" data-link="2,3,5,22" ><a href="http://openlectures.org/">openlectures</a></li>
-                <li data-pos="13, 8; 13,9" data-label-ter = "2" data-link="1,3">ABC</li>
-                <li data-pos="11,16" data-label-dir="SE">DEF</li>
-                <li data-pos="2,18" data-link="2"></li>
-                <li data-pos="6,18"></li>
-                <li data-pos="8,20; 9,18" data-label-dir = "S" data-link = "1,2,3,5"><a href="https://github.com/openlectures/subway.js">subway.js</a></li>
+            <ul class="subway-tracks ne-line" data-color="#9210A5" data-start-point="2,2">
+                <li data-dest="">Harbourfront</li>
+                <li data-dest="">Outram Park</li>
+                <li data-dest="">Chinatown</li>
+                <li data-dest="">Clarke Quay</li>
+                <li data-dest="">Dhoby Ghaut</li>
+                <li data-dest="">Little India</li>
+                <li data-dest="">Farrer Park</li>
+                <li data-dest="">Boon Keng</li>
+                <li data-dest="">Potong Pasir</li>
+                <li data-dest="">Woodleigh</li>
+                <li data-dest="">Serangoon</li>
+                <li data-dest="">Kovan</li>
+                <li data-dest="">Hougang</li>
+                <li data-dest="">Buangkok</li>
+                <li data-dest="">Sengkang</li>
+                <li data-dest="">Punggol</li>
             </ul>
+            <ul class="subway-tracks ns-line" data-color="#D71D06" data-start-point="2,2">
+                <li data-pos="">Marina Bay</li>
+                <li data-pos="">Raffles Place</li>
+                <li data-pos="">City Hall</li>
+                <li data-pos="">Dhoby Ghaut</li>
+                <li data-pos="">Orchard</li>
+                <li data-pos="">Newton</li>
+                <li data-pos="">Novena</li>
+                <li data-pos="">Toa Payoh</li>
+                <li data-pos="">Braddell</li>
+                <li data-pos="">Bishan</li>
+                <li data-pos="">Ang Mo Kio</li>
+                <li data-pos="">Yio Chu Kang</li>
+                <li data-pos="">Khatib</li>
+                <li data-pos="">Yishun</li>
+                <li data-pos="">Sembawang</li>
+                <li data-pos="">Admiralty</li>
+                <li data-pos="">Woodlands</li>
+                <li data-pos="">Marsling</li>
+                <li data-pos="">Kranji</li>
+                <li data-pos="">Yew Tee</li>
+                <li data-pos="">Choa Chu Kang</li>
+                <li data-pos="">Bukit Gombak</li>
+                <li data-pos="">Bukit Batok</li>
+                <li data-pos="">Jurong East</li>
+            </ul>
+            <ul class="subway-tracks circle-line" data-color="#DA8B02" data-start-point="2,2">
+                <li data-pos="">Dhoby Ghaut</li>
+                <li data-pos="">Bencoolen</li>
+                <li data-pos="">Bras Basah</li>
+                <li data-pos="">Esplanade</li>
+                <li data-pos="">Bayfront</li>
+                <li data-pos="">Marina Bay</li>
+                <li data-pos="">Promenade</li>
+                <li data-pos="">Nicoll Highway</li>
+                <li data-pos="">Stadium</li>
+                <li data-pos="">Mountbatten</li>
+                <li data-pos="">Dakota</li>
+                <li data-pos="">Paya Lebar</li>
+                <li data-pos="">MacPherson</li>
+                <li data-pos="">Tai Seng</li>
+                <li data-pos="">Bartley</li>
+                <li data-pos="">Serangoon</li>
+                <li data-pos="">Lorong Chuan</li>
+                <li data-pos="">Bishan</li>
+                <li data-pos="">Marymount</li>
+                <li data-pos="">Caldecott</li>
+                <li data-pos="">Botanic Gardens</li>
+                <li data-pos="">Farrer Road</li>
+                <li data-pos="">Holland Village</li>
+                <li data-pos="">Buona Vista</li>
+                <li data-pos="">One-North</li>
+                <li data-pos="">Kent Ridge</li>
+                <li data-pos="">Haw Par Villa</li>
+                <li data-pos="">Pasir Panjang</li>
+                <li data-pos="">Labrador Park</li>
+                <li data-pos="">Telok Blangah</li>
+                <li data-pos="">Harbourfront</li>
+            </ul>
+            <ul class="subway-tracks thomson-line" data-color="#773F0A" data-start-point="2,2">
+                <li data-pos="">Gardens by the Bay</li>
+                <li data-pos="">Marina South</li>
+                <li data-pos="">Marina Bay</li>
+                <li data-pos="">Shenton Way</li>
+                <li data-pos="">Maxwell</li>
+                <li data-pos="">Outram Park</li>
+                <li data-pos="">Havelock</li>
+                <li data-pos="">Great World</li>
+                <li data-pos="">Orchard</li>
+                <li data-pos="">Orchard Boulevard</li>
+                <li data-pos="">Napier</li>
+                <li data-pos="">Stevens</li>
+                <li data-pos="">Mt. Pleasant</li>
+                <li data-pos="">Caldecott</li>
+                <li data-pos="">Upp. Thomson</li>
+                <li data-pos="">Sin Ming</li>
+                <li data-pos="">Mayflower</li>
+                <li data-pos="">Lentor</li>
+                <li data-pos="">Springleaf</li>
+                <li data-pos="">Woodlands South</li>
+                <li data-pos="">Woodlands</li>
+                <li data-pos="">Woodlands North</li>
+            </ul>
+            <ul class="subway-tracks downtown-line" data-color="#0254A0" data-start-point="2,2">
+                <li data-pos="">Bukit Panjang</li>
+                <li data-pos="">Cashew</li>
+                <li data-pos="">Hillview</li>
+                <li data-pos="">Beauty World</li>
+                <li data-pos="">King Albert Park</li>
+                <li data-pos="">Sixth Avenue</li>
+                <li data-pos="">Tan Kah Kee</li>
+                <li data-pos="">Botanic Gardens</li>
+                <li data-pos="">Stevens</li>
+                <li data-pos="">Newton</li>
+                <li data-pos="">Little India</li>
+                <li data-pos="">Rochor</li>
+                <li data-pos="">Bugis</li>
+                <li data-pos="">Promenade</li>
+                <li data-pos="">Bayfront</li>
+                <li data-pos="">Downtown</li>
+                <li data-pos="">Chinatown</li>
+                <li data-pos="">Fort Canning</li>
+                <li data-pos="">Bencoolen</li>
+                <li data-pos="">Jalan Besar</li>
+                <li data-pos="">Bendemeer</li>
+                <li data-pos="">Geylang Bahru</li>
+                <li data-pos="">Mattar</li>
+                <li data-pos="">Macpherson</li>
+                <li data-pos="">Ubi</li>
+                <li data-pos="">Kaki Bukit</li>
+                <li data-pos="">Bedok North</li>
+                <li data-pos="">Bedok Reservoir</li>
+                <li data-pos="">Tampines West</li>
+                <li data-pos="">Tampines</li>
+                <li data-pos="">Tampines East</li>
+                <li data-pos="">Upper Changi</li>
+                <li data-pos="">Expo</li>
+            </ul>
+
             <ul id="subway-stations">
                 <!--EW Line-->
-                <li>Pasir Ris</li>
-                <li>Tampines</li>
-                <li>Simei</li>
-                <li>Tanah Merah</li>
-                <li>Expo</li>
-                <li>Changi Airport</li>
-                <li>Bedok</li>
-                <li>Kembangan</li>
-                <li>Eunos</li>
-                <li>Paya Lebar</li>
-                <li>Aljunied</li>
-                <li>Kallang</li>
-                <li>Lavender</li>
-                <li>Bugis</li>
-                <li>City Hall</li>
-                <li>Raffles Place</li>
-                <li>Tanjong Pagar</li>
-                <li>Outram Park</li>
-                <li>Tiong Bahru</li>
-                <li>Redhill</li>
-                <li>Queenstown</li>
-                <li>Commonwealth</li>
-                <li>Buona Vista</li>
-                <li>Dover</li>
-                <li>Clementi</li>
-                <li>Jurong East</li>
-                <li>Chinese Garden</li>
-                <li>Lakeside</li>
-                <li>Boon Lay</li>
-                <li>Pioneer</li>
-                <li>Joo Koon</li>
+                <li data-pos="">Pasir Ris</li>
+                <li data-pos="">Tampines</li>
+                <li data-pos="">Simei</li>
+                <li data-pos="">Tanah Merah</li>
+                <li data-pos="">Expo</li>
+                <li data-pos="">Changi Airport</li>
+                <li data-pos="">Bedok</li>
+                <li data-pos="">Kembangan</li>
+                <li data-pos="">Eunos</li>
+                <li data-pos="">Paya Lebar</li>
+                <li data-pos="">Aljunied</li>
+                <li data-pos="">Kallang</li>
+                <li data-pos="">Lavender</li>
+                <li data-pos="">Bugis</li>
+                <li data-pos="">City Hall</li>
+                <li data-pos="">Raffles Place</li>
+                <li data-pos="">Tanjong Pagar</li>
+                <li data-pos="">Outram Park</li>
+                <li data-pos="">Tiong Bahru</li>
+                <li data-pos="">Redhill</li>
+                <li data-pos="">Queenstown</li>
+                <li data-pos="">Commonwealth</li>
+                <li data-pos="">Buona Vista</li>
+                <li data-pos="">Dover</li>
+                <li data-pos="">Clementi</li>
+                <li data-pos="">Jurong East</li>
+                <li data-pos="">Chinese Garden</li>
+                <li data-pos="">Lakeside</li>
+                <li data-pos="">Boon Lay</li>
+                <li data-pos="">Pioneer</li>
+                <li data-pos="">Joo Koon</li>
 
                 <!--NE Line-->
-                <li>Harbourfront</li>
-                <li>Outram Park</li>
-                <li>Chinatown</li>
-                <li>Clarke Quay</li>
-                <li>Dhoby Ghaut</li>
-                <li>Little India</li>
-                <li>Farrer Park</li>
-                <li>Boon Keng</li>
-                <li>Potong Pasir</li>
-                <li>Woodleigh</li>
-                <li>Serangoon</li>
-                <li>Kovan</li>
-                <li>Hougang</li>
-                <li>Buangkok</li>
-                <li>Sengkang</li>
-                <li>Punggol</li>
+                <li data-pos="">Harbourfront</li>
+                <li data-pos="">Outram Park</li>
+                <li data-pos="">Chinatown</li>
+                <li data-pos="">Clarke Quay</li>
+                <li data-pos="">Dhoby Ghaut</li>
+                <li data-pos="">Little India</li>
+                <li data-pos="">Farrer Park</li>
+                <li data-pos="">Boon Keng</li>
+                <li data-pos="">Potong Pasir</li>
+                <li data-pos="">Woodleigh</li>
+                <li data-pos="">Serangoon</li>
+                <li data-pos="">Kovan</li>
+                <li data-pos="">Hougang</li>
+                <li data-pos="">Buangkok</li>
+                <li data-pos="">Sengkang</li>
+                <li data-pos="">Punggol</li>
 
                 <!--NS Line-->
-                <li>Marina Bay</li>
-                <li>Raffles Place</li>
-                <li>City Hall</li>
-                <li>Dhoby Ghaut</li>
-                <li>Orchard</li>
-                <li>Newton</li>
-                <li>Novena</li>
-                <li>Toa Payoh</li>
-                <li>Braddell</li>
-                <li>Bishan</li>
-                <li>Ang Mo Kio</li>
-                <li>Yio Chu Kang</li>
-                <li>Khatib</li>
-                <li>Yishun</li>
-                <li>Sembawang</li>
-                <li>Admiralty</li>
-                <li>Woodlands</li>
-                <li>Marsling</li>
-                <li>Kranji</li>
-                <li>Yew Tee</li>
-                <li>Choa Chu Kang</li>
-                <li>Bukit Gombak</li>
-                <li>Bukit Batok</li>
-                <li>Jurong East</li>
+                <li data-pos="">Marina Bay</li>
+                <li data-pos="">Raffles Place</li>
+                <li data-pos="">City Hall</li>
+                <li data-pos="">Dhoby Ghaut</li>
+                <li data-pos="">Orchard</li>
+                <li data-pos="">Newton</li>
+                <li data-pos="">Novena</li>
+                <li data-pos="">Toa Payoh</li>
+                <li data-pos="">Braddell</li>
+                <li data-pos="">Bishan</li>
+                <li data-pos="">Ang Mo Kio</li>
+                <li data-pos="">Yio Chu Kang</li>
+                <li data-pos="">Khatib</li>
+                <li data-pos="">Yishun</li>
+                <li data-pos="">Sembawang</li>
+                <li data-pos="">Admiralty</li>
+                <li data-pos="">Woodlands</li>
+                <li data-pos="">Marsling</li>
+                <li data-pos="">Kranji</li>
+                <li data-pos="">Yew Tee</li>
+                <li data-pos="">Choa Chu Kang</li>
+                <li data-pos="">Bukit Gombak</li>
+                <li data-pos="">Bukit Batok</li>
+                <li data-pos="">Jurong East</li>
 
                 <!--Circle Line-->
-                <li>Dhoby Ghaut</li>
-                <li>Bencoolen</li>
-                <li>Bras Basah</li>
-                <li>Esplanade</li>
-                <li>Bayfront</li>
-                <li>Marina Bay</li>
-                <li>Promenade</li>
-                <li>Nicoll Highway</li>
-                <li>Stadium</li>
-                <li>Mountbatten</li>
-                <li>Dakota</li>
-                <li>Paya Lebar</li>
-                <li>MacPherson</li>
-                <li>Tai Seng</li>
-                <li>Bartley</li>
-                <li>Serangoon</li>
-                <li>Lorong Chuan</li>
-                <li>Bishan</li>
-                <li>Marymount</li>
-                <li>Caldecott</li>
-                <li>Botanic Gardens</li>
-                <li>Farrer Road</li>
-                <li>Holland Village</li>
-                <li>Buona Vista</li>
-                <li>One-North</li>
-                <li>Kent Ridge</li>
-                <li>Haw Par Villa</li>
-                <li>Pasir Panjang</li>
-                <li>Labrador Park</li>
-                <li>Telok Blangah</li>
-                <li>Harbourfront</li>
+                <li data-pos="">Dhoby Ghaut</li>
+                <li data-pos="">Bencoolen</li>
+                <li data-pos="">Bras Basah</li>
+                <li data-pos="">Esplanade</li>
+                <li data-pos="">Bayfront</li>
+                <li data-pos="">Marina Bay</li>
+                <li data-pos="">Promenade</li>
+                <li data-pos="">Nicoll Highway</li>
+                <li data-pos="">Stadium</li>
+                <li data-pos="">Mountbatten</li>
+                <li data-pos="">Dakota</li>
+                <li data-pos="">Paya Lebar</li>
+                <li data-pos="">MacPherson</li>
+                <li data-pos="">Tai Seng</li>
+                <li data-pos="">Bartley</li>
+                <li data-pos="">Serangoon</li>
+                <li data-pos="">Lorong Chuan</li>
+                <li data-pos="">Bishan</li>
+                <li data-pos="">Marymount</li>
+                <li data-pos="">Caldecott</li>
+                <li data-pos="">Botanic Gardens</li>
+                <li data-pos="">Farrer Road</li>
+                <li data-pos="">Holland Village</li>
+                <li data-pos="">Buona Vista</li>
+                <li data-pos="">One-North</li>
+                <li data-pos="">Kent Ridge</li>
+                <li data-pos="">Haw Par Villa</li>
+                <li data-pos="">Pasir Panjang</li>
+                <li data-pos="">Labrador Park</li>
+                <li data-pos="">Telok Blangah</li>
+                <li data-pos="">Harbourfront</li>
 
                 <!--Thomson Line-->
-                <li>Gardens by the Bay</li>
-                <li>Marina South</li>
-                <li>Marina Bay</li>
-                <li>Shenton Way</li>
-                <li>Maxwell</li>
-                <li>Outram Park</li>
-                <li>Havelock</li>
-                <li>Great World</li>
-                <li>Orchard</li>
-                <li>Orchard Boulevard</li>
-                <li>Napier</li>
-                <li>Stevens</li>
-                <li>Mt. Pleasant</li>
-                <li>Caldecott</li>
-                <li>Upp. Thomson</li>
-                <li>Sin Ming</li>
-                <li>Mayflower</li>
-                <li>Lentor</li>
-                <li>Springleaf</li>
-                <li>Woodlands South</li>
-                <li>Woodlands</li>
-                <li>Woodlands North</li>
+                <li data-pos="">Gardens by the Bay</li>
+                <li data-pos="">Marina South</li>
+                <li data-pos="">Marina Bay</li>
+                <li data-pos="">Shenton Way</li>
+                <li data-pos="">Maxwell</li>
+                <li data-pos="">Outram Park</li>
+                <li data-pos="">Havelock</li>
+                <li data-pos="">Great World</li>
+                <li data-pos="">Orchard</li>
+                <li data-pos="">Orchard Boulevard</li>
+                <li data-pos="">Napier</li>
+                <li data-pos="">Stevens</li>
+                <li data-pos="">Mt. Pleasant</li>
+                <li data-pos="">Caldecott</li>
+                <li data-pos="">Upp. Thomson</li>
+                <li data-pos="">Sin Ming</li>
+                <li data-pos="">Mayflower</li>
+                <li data-pos="">Lentor</li>
+                <li data-pos="">Springleaf</li>
+                <li data-pos="">Woodlands South</li>
+                <li data-pos="">Woodlands</li>
+                <li data-pos="">Woodlands North</li>
 
                 <!--Downtown Line-->
-                <li>Bukit Panjang</li>
-                <li>Cashew</li>
-                <li>Hillview</li>
-                <li>Beauty World</li>
-                <li>King Albert Park</li>
-                <li>Sixth Avenue</li>
-                <li>Tan Kah Kee</li>
-                <li>Botanic Gardens</li>
-                <li>Stevens</li>
-                <li>Newton</li>
-                <li>Little India</li>
-                <li>Rochor</li>
-                <li>Bugis</li>
-                <li>Promenade</li>
-                <li>Bayfront</li>
-                <li>Downtown</li>
-                <li>Chinatown</li>
-                <li>Fort Canning</li>
-                <li>Bencoolen</li>
-                <li>Jalan Besar</li>
-                <li>Bendemeer</li>
-                <li>Geylang Bahru</li>
-                <li>Mattar</li>
-                <li>Macpherson</li>
-                <li>Ubi</li>
-                <li>Kaki Bukit</li>
-                <li>Bedok North</li>
-                <li>Bedok Reservoir</li>
-                <li>Tampines West</li>
-                <li>Tampines</li>
-                <li>Tampines East</li>
-                <li>Upper Changi</li>
-                <li>Expo</li>
+                <li data-pos="">Bukit Panjang</li>
+                <li data-pos="">Cashew</li>
+                <li data-pos="">Hillview</li>
+                <li data-pos="">Beauty World</li>
+                <li data-pos="">King Albert Park</li>
+                <li data-pos="">Sixth Avenue</li>
+                <li data-pos="">Tan Kah Kee</li>
+                <li data-pos="">Botanic Gardens</li>
+                <li data-pos="">Stevens</li>
+                <li data-pos="">Newton</li>
+                <li data-pos="">Little India</li>
+                <li data-pos="">Rochor</li>
+                <li data-pos="">Bugis</li>
+                <li data-pos="">Promenade</li>
+                <li data-pos="">Bayfront</li>
+                <li data-pos="">Downtown</li>
+                <li data-pos="">Chinatown</li>
+                <li data-pos="">Fort Canning</li>
+                <li data-pos="">Bencoolen</li>
+                <li data-pos="">Jalan Besar</li>
+                <li data-pos="">Bendemeer</li>
+                <li data-pos="">Geylang Bahru</li>
+                <li data-pos="">Mattar</li>
+                <li data-pos="">Macpherson</li>
+                <li data-pos="">Ubi</li>
+                <li data-pos="">Kaki Bukit</li>
+                <li data-pos="">Bedok North</li>
+                <li data-pos="">Bedok Reservoir</li>
+                <li data-pos="">Tampines West</li>
+                <li data-pos="">Tampines</li>
+                <li data-pos="">Tampines East</li>
+                <li data-pos="">Upper Changi</li>
+                <li data-pos="">Expo</li>
             </ul>
         </div>
         <div style ="width:75%; height:100%">
